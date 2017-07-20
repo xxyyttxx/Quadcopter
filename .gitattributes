@@ -1,2 +1,7 @@
+# learn how to write .gitattributes
+# http://www.cnblogs.com/kidsitcn/p/4769344.html
+	# should track json & xml to binary?
+	# on the view of whether it change by mechine frequently
+
 # Auto detect text files and perform LF normalization
 * text=auto

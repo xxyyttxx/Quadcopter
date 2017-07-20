@@ -1,0 +1,10 @@
+# learn how to write .gitignore 
+# http://sentsin.com/web/666.html
+# https://gist.github.com/8264427
+# http://blog.csdn.net/sbaini/article/details/8639063
+
+.DS_Store
+project
+!project/*/application
+!project/*/*.uvprojx
+!project/*/*.uvoptx
