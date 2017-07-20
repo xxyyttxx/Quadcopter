@@ -3,7 +3,7 @@
   @author  tjua @ ES-SS-UESTC © 2017
   @version V1.0
   @date    20170720
-  @brief   This file provides firmware functions to user LED on nucleo64
+  @brief   This file provides firmware functions to user LED on nucleo64.
 
   LD2 - PA5 - TIM2_CH1
   
