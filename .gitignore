@@ -4,7 +4,10 @@
 # http://blog.csdn.net/sbaini/article/details/8639063
 
 .DS_Store
-project
-!project/*/application
-!project/*/*.uvprojx
-!project/*/*.uvoptx
+/project/*/DebugConfig
+/project/*/Listings
+/project/*/Objects
+/project/*/*.uvgui.*
+
+# 目录和文件不一样！！！
+# 我选择规避，尽量不要用!做文件夹屏蔽的差集
