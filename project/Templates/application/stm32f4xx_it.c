@@ -125,14 +125,15 @@ void DebugMon_Handler(void)
 {
 }
 
-/**
-  * @brief  This function handles PendSVC exception.
-  * @param  None
-  * @retval None
-  */
-void PendSV_Handler(void)
-{
-}
+///**
+//  * @brief  This function handles PendSVC exception.
+//  * @param  None
+//  * @retval None
+//  */
+//void PendSV_Handler(void)
+//{
+//}
+//< defined in ucosii\os_cpu_a.asm
 
 /**
   * @brief  This function handles SysTick Handler.
@@ -143,6 +144,16 @@ void SysTick_Handler(void)
 {
   TimingDelay_Decrement();
 }
+//#include "ucos_ii.h"
+//void SysTick_Handler(void)
+//{
+//	if (OSRunning == OS_TRUE) {
+//		OSIntEnter();
+//		OSTimeTick();        
+//		OSIntExit();
+//	}
+//}
+//< use as os tick, if would like to run os
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
