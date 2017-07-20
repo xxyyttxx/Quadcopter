@@ -84,7 +84,7 @@
 
   /* #define STM32F410xx */      /*!< STM32F410Tx, STM32F410Cx and STM32F410Rx */
 
-  /* #define STM32F411xE */      /*!< STM32F411CC, STM32F411RC, STM32F411VC, STM32F411CE, STM32F411RE and STM32F411VE Devices */
+     #define STM32F411xE         /*!< STM32F411CC, STM32F411RC, STM32F411VC, STM32F411CE, STM32F411RE and STM32F411VE Devices */
 
   /* #define STM32F412xG */      /*!< STM32F412CEU, STM32F412CGU, STM32F412ZET, STM32F412ZGT, STM32F412ZEJ, STM32F412ZGJ,
                                       STM32F412VET, STM32F412VGT, STM32F412VEH, STM32F412VGH, STM32F412RET, STM32F412RGT,
@@ -128,7 +128,7 @@
    In this case, these drivers will not be included and the application code will 
    be based on direct access to peripherals registers 
    */
-  /*#define USE_STDPERIPH_DRIVER */
+    #define USE_STDPERIPH_DRIVER   
 #endif /* USE_STDPERIPH_DRIVER */
 
 /**
