@@ -3,7 +3,7 @@
 ;* Author		: Librae 
 ;* Version		: V1.0
 ;* Date			: 06/10/2010
-;* Description	: ¦ÌCOS-II asm port	for STM32
+;* Description	: Î¼COS-II asm port	for STM32
 ;*******************************************************************************/
 
 		IMPORT  OSRunning               ; External references
@@ -23,11 +23,11 @@
         EXPORT  PendSV_Handler
         	
      
-NVIC_INT_CTRL   	EQU     0xE000ED04  ; ÖĞ¶Ï¿ØÖÆ¼Ä´æÆ÷
-NVIC_SYSPRI2    	EQU     0xE000ED22  ; ÏµÍ³ÓÅÏÈ¼¶¼Ä´æÆ÷(2)
-NVIC_PENDSV_PRI 	EQU         0xFFFF  ; PendSVÖĞ¶ÏºÍÏµÍ³½ÚÅÄÖĞ¶Ï
-                                        ; (¶¼Îª×îµÍ£¬0xff).
-NVIC_PENDSVSET  	EQU     0x10000000  ; ´¥·¢Èí¼şÖĞ¶ÏµÄÖµ.
+NVIC_INT_CTRL   	EQU     0xE000ED04  ; ä¸­æ–­æ§åˆ¶å¯„å­˜å™¨
+NVIC_SYSPRI2    	EQU     0xE000ED22  ; ç³»ç»Ÿä¼˜å…ˆçº§å¯„å­˜å™¨(2)
+NVIC_PENDSV_PRI 	EQU         0xFFFF  ; PendSVä¸­æ–­å’Œç³»ç»ŸèŠ‚æ‹ä¸­æ–­
+                                        ; (éƒ½ä¸ºæœ€ä½ï¼Œ0xff).
+NVIC_PENDSVSET  	EQU     0x10000000  ; è§¦å‘è½¯ä»¶ä¸­æ–­çš„å€¼.
 
 
 		PRESERVE8 
@@ -70,23 +70,23 @@ NVIC_PENDSVSET  	EQU     0x10000000  ; ´¥·¢Èí¼şÖĞ¶ÏµÄÖµ.
 ;********************************************************************************************************
 
 OS_CPU_SR_Save
-    MRS     R0, PRIMASK  	;¶ÁÈ¡PRIMASKµ½R0,R0Îª·µ»ØÖµ 
-    CPSID   I				;PRIMASK=1,¹ØÖĞ¶Ï(NMIºÍÓ²¼şFAULT¿ÉÒÔÏìÓ¦)
-    BX      LR			    ;·µ»Ø
+    MRS     R0, PRIMASK  	;è¯»å–PRIMASKåˆ°R0,R0ä¸ºè¿”å›å€¼ 
+    CPSID   I				;PRIMASK=1,å…³ä¸­æ–­(NMIå’Œç¡¬ä»¶FAULTå¯ä»¥å“åº”)
+    BX      LR			    ;è¿”å›
 
 OS_CPU_SR_Restore
-    MSR     PRIMASK, R0	   	;¶ÁÈ¡R0µ½PRIMASKÖĞ,R0Îª²ÎÊı
-    BX      LR				;·µ»Ø
+    MSR     PRIMASK, R0	   	;è¯»å–R0åˆ°PRIMASKä¸­,R0ä¸ºå‚æ•°
+    BX      LR				;è¿”å›
 
 
 ;/**************************************************************************************
-;* º¯ÊıÃû³Æ: OSStartHighRdy
+;* å‡½æ•°åç§°: OSStartHighRdy
 ;*
-;* ¹¦ÄÜÃèÊö: Ê¹ÓÃµ÷¶ÈÆ÷ÔËĞĞµÚÒ»¸öÈÎÎñ
+;* åŠŸèƒ½æè¿°: ä½¿ç”¨è°ƒåº¦å™¨è¿è¡Œç¬¬ä¸€ä¸ªä»»åŠ¡
 ;* 
-;* ²Î    Êı: None
+;* å‚    æ•°: None
 ;*
-;* ·µ »Ø Öµ: None
+;* è¿” å› å€¼: None
 ;**************************************************************************************/  
 
 OSStartHighRdy
@@ -101,7 +101,7 @@ OSStartHighRdy
         MOV     R5, #1
         STRB    R5, [R4]
 
-                                       ;ÇĞ»»µ½×î¸ßÓÅÏÈ¼¶µÄÈÎÎñ
+                                       ;åˆ‡æ¢åˆ°æœ€é«˜ä¼˜å…ˆçº§çš„ä»»åŠ¡
         LDR     R4, =NVIC_INT_CTRL     ;rigger the PendSV exception (causes context switch)
         LDR     R5, =NVIC_PENDSVSET
         STR     R5, [R4]
@@ -111,36 +111,36 @@ OSStartHang
         B       OSStartHang            ;should never get here
 
 ;/**************************************************************************************
-;* º¯ÊıÃû³Æ: OSCtxSw
+;* å‡½æ•°åç§°: OSCtxSw
 ;*
-;* ¹¦ÄÜÃèÊö: ÈÎÎñ¼¶ÉÏÏÂÎÄÇĞ»»         
+;* åŠŸèƒ½æè¿°: ä»»åŠ¡çº§ä¸Šä¸‹æ–‡åˆ‡æ¢         
 ;*
-;* ²Î    Êı: None
+;* å‚    æ•°: None
 ;*
-;* ·µ »Ø Öµ: None
+;* è¿” å› å€¼: None
 ;***************************************************************************************/
   
 OSCtxSw
 		PUSH    {R4, R5}
-        LDR     R4, =NVIC_INT_CTRL  	;´¥·¢PendSVÒì³£ (causes context switch)
+        LDR     R4, =NVIC_INT_CTRL  	;è§¦å‘PendSVå¼‚å¸¸ (causes context switch)
         LDR     R5, =NVIC_PENDSVSET
         STR     R5, [R4]
 		POP     {R4, R5}
         BX      LR
 
 ;/**************************************************************************************
-;* º¯ÊıÃû³Æ: OSIntCtxSw
+;* å‡½æ•°åç§°: OSIntCtxSw
 ;*
-;* ¹¦ÄÜÃèÊö: ÖĞ¶Ï¼¶ÈÎÎñÇĞ»»
+;* åŠŸèƒ½æè¿°: ä¸­æ–­çº§ä»»åŠ¡åˆ‡æ¢
 ;*
-;* ²Î    Êı: None
+;* å‚    æ•°: None
 ;*
-;* ·µ »Ø Öµ: None
+;* è¿” å› å€¼: None
 ;***************************************************************************************/
 
 OSIntCtxSw
 		PUSH    {R4, R5}
-        LDR     R4, =NVIC_INT_CTRL      ;´¥·¢PendSVÒì³£ (causes context switch)
+        LDR     R4, =NVIC_INT_CTRL      ;è§¦å‘PendSVå¼‚å¸¸ (causes context switch)
         LDR     R5, =NVIC_PENDSVSET
         STR     R5, [R4]
 		POP     {R4, R5}
@@ -148,18 +148,18 @@ OSIntCtxSw
         NOP
 
 ;/**************************************************************************************
-;* º¯ÊıÃû³Æ: OSPendSV
+;* å‡½æ•°åç§°: OSPendSV
 ;*
-;* ¹¦ÄÜÃèÊö: OSPendSV is used to cause a context switch.
+;* åŠŸèƒ½æè¿°: OSPendSV is used to cause a context switch.
 ;*
-;* ²Î    Êı: None
+;* å‚    æ•°: None
 ;*
-;* ·µ »Ø Öµ: None
+;* è¿” å› å€¼: None
 ;***************************************************************************************/
 
 PendSV_Handler
     CPSID   I                                                   ; Prevent interruption during context switch
-    MRS     R0, PSP                                             ; PSP is process stack pointer Èç¹ûÔÚÓÃPSP¶ÑÕ»,Ôò¿ÉÒÔºöÂÔ±£´æ¼Ä´æÆ÷,²Î¿¼CM3È¨ÍşÖĞµÄË«¶ÑÕ»-°×²Ë×¢
+    MRS     R0, PSP                                             ; PSP is process stack pointer å¦‚æœåœ¨ç”¨PSPå †æ ˆ,åˆ™å¯ä»¥å¿½ç•¥ä¿å­˜å¯„å­˜å™¨,å‚è€ƒCM3æƒå¨ä¸­çš„åŒå †æ ˆ-ç™½èœæ³¨
     CBZ     R0, PendSV_Handler_Nosave		                    ; Skip register save the first time
 	
 	;Is the task using the FPU context? If so, push high vfp registers.

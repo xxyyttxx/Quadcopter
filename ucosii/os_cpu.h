@@ -3,8 +3,8 @@
 * File Name		: os_cpu_c.c 
 * Author		: Librae
 * Date			: 06/10/2010
-* Description	: ¦ÌCOS-IIÔÚSTM32ÉÏµÄÒÆÖ²´úÂëCÓïÑÔ²¿·Ö£¬
-*				  °üÀ¨ÈÎÎñ¶ÑÕ»³õÊ¼»¯´úÂëºÍ¹³×Óº¯ÊıµÈ
+* Description	: Î¼COS-IIåœ¨STM32ä¸Šçš„ç§»æ¤ä»£ç Cè¯­è¨€éƒ¨åˆ†ï¼Œ
+*				  åŒ…æ‹¬ä»»åŠ¡å †æ ˆåˆå§‹åŒ–ä»£ç å’Œé’©å­å‡½æ•°ç­‰
 
 ******************************************************************************/
 
@@ -18,7 +18,7 @@
 #endif
 
 /******************************************************************************
-*                    ¶¨ÒåÓë±àÒëÆ÷ÎŞ¹ØµÄÊı¾İÀàĞÍ
+*                    å®šä¹‰ä¸ç¼–è¯‘å™¨æ— å…³çš„æ•°æ®ç±»å‹
 ******************************************************************************/
 
 typedef unsigned char  BOOLEAN;
@@ -31,7 +31,7 @@ typedef signed   int   INT32S;			/* Signed   32 bit quantity       */
 typedef float          FP32;			/* Single precision floating point*/
 typedef double         FP64;			/* Double precision floating point*/
 
-//STM32ÊÇ32Î»Î»¿íµÄ,ÕâÀïOS_STKºÍOS_CPU_SR¶¼Ó¦¸ÃÎª32Î»Êı¾İÀàĞÍ
+//STM32æ˜¯32ä½ä½å®½çš„,è¿™é‡ŒOS_STKå’ŒOS_CPU_SRéƒ½åº”è¯¥ä¸º32ä½æ•°æ®ç±»å‹
 typedef unsigned int   OS_STK;			/* Each stack entry is 32-bit wide*/
 typedef unsigned int   OS_CPU_SR;		/* Define size of CPU status register*/
 /* 
@@ -49,10 +49,10 @@ typedef unsigned int   OS_CPU_SR;		/* Define size of CPU status register*/
 */
 
 
-//¶¨ÒåÕ»µÄÔö³¤·½Ïò.
-//CM3ÖĞ,Õ»ÊÇÓÉ¸ßµØÖ·ÏòµÍµØÖ·Ôö³¤µÄ,ËùÒÔOS_STK_GROWTHÉèÖÃÎª1
+//å®šä¹‰æ ˆçš„å¢é•¿æ–¹å‘.
+//CM3ä¸­,æ ˆæ˜¯ç”±é«˜åœ°å€å‘ä½åœ°å€å¢é•¿çš„,æ‰€ä»¥OS_STK_GROWTHè®¾ç½®ä¸º1
 #define  OS_STK_GROWTH        1      /* Stack grows from HIGH to LOW memory on ARM    */
-//ÈÎÎñÇĞ»»ºê,ÓÉ»ã±àÊµÏÖ.
+//ä»»åŠ¡åˆ‡æ¢å®,ç”±æ±‡ç¼–å®ç°.
 #define  OS_TASK_SW()         OSCtxSw()
 
 /*
@@ -61,11 +61,11 @@ typedef unsigned int   OS_CPU_SR;		/* Define size of CPU status register*/
 *                           (see OS_CPU_A.ASM)
 *******************************************************************************
 */
-//OS_CRITICAL_METHOD = 1 :Ö±½ÓÊ¹ÓÃ´¦ÀíÆ÷µÄ¿ª¹ØÖĞ¶ÏÖ¸ÁîÀ´ÊµÏÖºê 
-//OS_CRITICAL_METHOD = 2 :ÀûÓÃ¶ÑÕ»±£´æºÍ»Ö¸´CPUµÄ×´Ì¬ 
-//OS_CRITICAL_METHOD = 3 :ÀûÓÃ±àÒëÆ÷À©Õ¹¹¦ÄÜ»ñµÃ³ÌĞò×´Ì¬×Ö£¬±£´æÔÚ¾Ö²¿±äÁ¿cpu_sr
+//OS_CRITICAL_METHOD = 1 :ç›´æ¥ä½¿ç”¨å¤„ç†å™¨çš„å¼€å…³ä¸­æ–­æŒ‡ä»¤æ¥å®ç°å® 
+//OS_CRITICAL_METHOD = 2 :åˆ©ç”¨å †æ ˆä¿å­˜å’Œæ¢å¤CPUçš„çŠ¶æ€ 
+//OS_CRITICAL_METHOD = 3 :åˆ©ç”¨ç¼–è¯‘å™¨æ‰©å±•åŠŸèƒ½è·å¾—ç¨‹åºçŠ¶æ€å­—ï¼Œä¿å­˜åœ¨å±€éƒ¨å˜é‡cpu_sr
 
-#define  OS_CRITICAL_METHOD   3	 	//½øÈëÁÙ½ç¶ÎµÄ·½·¨
+#define  OS_CRITICAL_METHOD   3	 	//è¿›å…¥ä¸´ç•Œæ®µçš„æ–¹æ³•
 
 #if OS_CRITICAL_METHOD == 3
 #define  OS_ENTER_CRITICAL()  {cpu_sr = OS_CPU_SR_Save();}
