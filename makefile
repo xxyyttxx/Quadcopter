@@ -12,7 +12,7 @@ create-stdp-proj:
 	fi
 
 clean:
-	rm -f project/*/Objects/* project/*/Listings/*
+	rm -f project/*/Objects/* project/*/Listings/* project/*/DebugConfig/*  project/*/*.uvguix.*
 
 clean_root:
 	rm -f *.bak *.ddk *.edk *.lst *.lnp *.mpf *.mpj *.obj *.omf *.plg *.rpt *.tmp *.__i *.crf *.o *.d *.axf *.tra *.dep JLinkLog.txt *.iex *.htm *.sct *.map
