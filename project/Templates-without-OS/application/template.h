@@ -1,5 +1,5 @@
 /**
-  @file    template.c
+  @file    template.h
   @author  tjua @ ES-SS-UESTC © 2017
   @version V1.0
   @date    20170720
@@ -15,7 +15,8 @@
 #endif 
 
 /* Includes ------------------------------------------------------------------*/
-#include "includes.h"
+#include "stm32f4xx.h"   
+#include "ucos_ii.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

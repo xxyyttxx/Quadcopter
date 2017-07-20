@@ -600,6 +600,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\stdperiph\Driver\src\stm32f4xx_wwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_conf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\stdperiph\Driver\src\stm32f4xx_conf.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -732,6 +737,11 @@
               <FileName>os_tmr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\ucosii\os_tmr.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_cpu_c_tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ucosii\os_cpu_c_tick.c</FilePath>
             </File>
           </Files>
         </Group>
