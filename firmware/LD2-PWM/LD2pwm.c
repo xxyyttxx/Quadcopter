@@ -18,7 +18,10 @@
 
 void GPIO_init_4_LD2_PWM (void)
 {
-	
+	/* PA5=TIM2_CH1*/
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+  
 	{
 		GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_TIM2);
 		GPIO_InitTypeDef r1 = {GPIO_Pin_5, GPIO_Mode_AF, GPIO_High_Speed, GPIO_OType_PP, GPIO_PuPd_NOPULL};

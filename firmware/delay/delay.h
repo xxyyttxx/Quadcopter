@@ -17,11 +17,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"   
 
+extern __IO uint32_t uwTimingDelay;
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Delay (__IO uint32_t ticks);
+void delay (__IO uint32_t ticks);
 void delayinit (void);
 
 

@@ -8,9 +8,11 @@
 
 #include "delay.h"
 
+__IO uint32_t uwTimingDelay;
+
 /// @brief  Inserts a delay time.
 /// @param  nTime: specifies the delay time length, in milliseconds.
-void Delay (__IO uint32_t ticks)
+void delay (__IO uint32_t ticks)
 { 
   uwTimingDelay = ticks;
 
@@ -36,7 +38,8 @@ void SysTick_Handler(void)
 void delayinit (void)
 {
   /* SysTick end of count event each 10ms */
+  RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 }
 
