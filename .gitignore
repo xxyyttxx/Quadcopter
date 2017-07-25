@@ -4,6 +4,7 @@
 # http://blog.csdn.net/sbaini/article/details/8639063
 
 .DS_Store
+Thumbs.db
 /project/*/DebugConfig
 /project/*/Listings
 /project/*/Objects
