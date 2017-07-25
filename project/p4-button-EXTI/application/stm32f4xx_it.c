@@ -64,11 +64,11 @@ void SysTick_Handler(void);
 /// @brief  This function handles External line 0 interrupt request.
 void EXTI15_10_IRQHandler (void)
 {
-  if(EXTI_GetITStatus(EXTI_Line0) != RESET)
+  if(EXTI_GetITStatus(EXTI_Line13) != RESET)
   {
     pwm_LD2 = pwm_range((int)pwm_LD2-10);
 		
     /* Clear the EXTI line 0 pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line0);
+    EXTI_ClearITPendingBit(EXTI_Line13);
   }
 }
