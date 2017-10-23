@@ -9,6 +9,7 @@ create-stdp-proj:
 		echo "$$PWD/project SHOULD NOT exist."; \
 	else \
 		source Lib2Proj.sh; \
+		./Lib2Proj.sh; \
 	fi
 
 clean:
