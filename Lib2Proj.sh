@@ -4,18 +4,22 @@
 
 # 针对F411裁剪Lib&Templates
 
-    # - stdperiph
-    #   - CMSIS
-    #       - Device
-    #           <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f411xe.s
-    #           <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-    #           <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Include/*
-    #       - Include
-    #           <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Include/**
-    #   - Driver
-    #       <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/STM32F4xx_StdPeriph_Driver/???
-    #       - inc
-    #       - src
+    ##########################################
+    # ./stdperiph
+    #  |....../CMSIS
+    #  |      |....../Device
+    #  |      |          <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f411xe.s
+    #  |      |          <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
+    #  |      |          <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Device/ST/STM32F4xx/Include/*
+    #  |      |....../Include
+    #  |                 <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/CMSIS/Include/**
+    #  |
+    #  |....../Driver
+    #         |          <- STM32F4xx_DSP_StdPeriph_Lib_V1.8.0/Libraries/STM32F4xx_StdPeriph_Driver/???
+    #         |......./inc
+    #         |......./src
+    #
+    ##########################################
 
     # Lib 代码
 
