@@ -34,7 +34,7 @@ void GPIO_init_4_BTN_EXTI (void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_Init(GPIOC, &GPIO_InitStructure); /* fixed #1 in 6513ab08c8a3d9be2c0de274092e8cfb35b52814 */
 
   /* Connect EXTI Line13 to PC13 pin */
   SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource13);
