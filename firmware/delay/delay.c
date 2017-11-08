@@ -12,7 +12,7 @@ __IO uint32_t uwTimingDelay;
 
 /// @brief  Inserts a delay time.
 /// @param  nTime: specifies the delay time length, in milliseconds.
-void delay (__IO uint32_t ticks)
+void delay (uint32_t ticks)
 { 
   uwTimingDelay = ticks;
 

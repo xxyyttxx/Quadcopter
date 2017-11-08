@@ -10,6 +10,7 @@ Thumbs.db
 /project/*/Objects
 /project/*/*.uvguix.*
 /project/*/*.scvd
+/reference
 
 # 目录和文件不一样！！！
 # 我选择规避，尽量不要用!做文件夹屏蔽的差集

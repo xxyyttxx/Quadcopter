@@ -46,7 +46,7 @@ void GPIO_init_4_BTN_EXTI (void)
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);
 
-  /* Enable and set EXTI Line0 Interrupt to the lowest priority */
+  /* Enable and set EXTI Line13 Interrupt to the lowest priority */
   NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;

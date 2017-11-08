@@ -1,4 +1,3 @@
-#include "main.h"
 #include "stm32f4xx_conf.h"
 #include "usart.h"
 

@@ -22,7 +22,7 @@ extern __IO uint32_t uwTimingDelay;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void delay (__IO uint32_t ticks);
+void delay (uint32_t ticks);
 void delayinit (void);
 
 
