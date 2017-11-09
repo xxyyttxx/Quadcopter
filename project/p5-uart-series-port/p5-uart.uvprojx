@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\uart-nucleo</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\uart-nucleo;..\..\firmware\delay</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,11 +773,6 @@
               <FileType>1</FileType>
               <FilePath>.\application\main.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32f4xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\application\stm32f4xx_it.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -787,6 +782,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\firmware\uart-nucleo\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\delay\delay.c</FilePath>
             </File>
           </Files>
         </Group>
