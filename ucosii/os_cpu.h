@@ -68,8 +68,9 @@ typedef unsigned int   OS_CPU_SR;		/* Define size of CPU status register*/
 #define  OS_CRITICAL_METHOD   3	 	//进入临界段的方法
 
 #if OS_CRITICAL_METHOD == 3
-#define  OS_ENTER_CRITICAL()  {cpu_sr = OS_CPU_SR_Save();}
-#define  OS_EXIT_CRITICAL()   {OS_CPU_SR_Restore(cpu_sr);}
+#define  OS_ENTER_CRITICAL()  ((void)(cpu_sr = OS_CPU_SR_Save()))
+#define  OS_EXIT_CRITICAL()   OS_CPU_SR_Restore(cpu_sr)
+// 不存在 f()()()... endless -- 因为类型定义没法像函数调用一般递归、但是可以通过强制转换得到想要的结果(格式就没有这么优美)
 #endif
 
 void       OSCtxSw(void);
