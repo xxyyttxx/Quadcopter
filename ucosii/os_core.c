@@ -491,7 +491,7 @@ INT16U  OSEventPendMulti (OS_EVENT  **pevents_pend,
                  OSTCBCur->OSTCBStatPend = OS_STAT_PEND_TO;
                  OS_EventTaskRemoveMulti(OSTCBCur, pevents_pend);
              }
-			 break;
+             break;
 
         case OS_STAT_PEND_TO:                           /* If events timed out, ...                    */
         default:                                        /* ... remove task from events' wait lists     */
@@ -2025,4 +2025,3 @@ INT8U  OS_TCBInit (INT8U    prio,
     OS_EXIT_CRITICAL();
     return (OS_ERR_TASK_NO_MORE_TCB);
 }
-	 	   	  		 			 	    		   		 		 	 	 			 	    		   	 			 	  	 		 				 		  			 		 					 	  	  		      		  	   		      		  	 		 	      		   		 		  	 		 	      		  		  		  

@@ -9,9 +9,9 @@
 #include "ucos_ii.h"
 void SysTick_Handler (void)
 {
-	if (OSRunning == OS_TRUE) {
-		OSIntEnter();
-		OSTimeTick();
-		OSIntExit();
-	}
+    if (OSRunning == OS_TRUE) {
+        OSIntEnter();
+        OSTimeTick();
+        OSIntExit();
+    }
 }

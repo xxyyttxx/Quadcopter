@@ -198,25 +198,25 @@ OS_STK *OSTaskStkInit (void (*task)(void *p_arg), void *p_arg, OS_STK *ptos, INT
     (void)opt;                                   /* 'opt' is not used, prevent warning                 */
     stk       = ptos;                            /* Load stack pointer                                 */
 
-#if (__FPU_PRESENT==1)&&(__FPU_USED==1)	
-	*(--stk) = (INT32U)0x00000000L; //No Name Register  
-	*(--stk) = (INT32U)0x00001000L; //FPSCR
-	*(--stk) = (INT32U)0x00000015L; //s15
-	*(--stk) = (INT32U)0x00000014L; //s14
-	*(--stk) = (INT32U)0x00000013L; //s13
-	*(--stk) = (INT32U)0x00000012L; //s12
-	*(--stk) = (INT32U)0x00000011L; //s11
-	*(--stk) = (INT32U)0x00000010L; //s10
-	*(--stk) = (INT32U)0x00000009L; //s9
-	*(--stk) = (INT32U)0x00000008L; //s8
-	*(--stk) = (INT32U)0x00000007L; //s7
-	*(--stk) = (INT32U)0x00000006L; //s6
-	*(--stk) = (INT32U)0x00000005L; //s5
-	*(--stk) = (INT32U)0x00000004L; //s4
-	*(--stk) = (INT32U)0x00000003L; //s3
-	*(--stk) = (INT32U)0x00000002L; //s2
-	*(--stk) = (INT32U)0x00000001L; //s1
-	*(--stk) = (INT32U)0x00000000L; //s0
+#if (__FPU_PRESENT==1)&&(__FPU_USED==1)
+    *(--stk) = (INT32U)0x00000000L; //No Name Register
+    *(--stk) = (INT32U)0x00001000L; //FPSCR
+    *(--stk) = (INT32U)0x00000015L; //s15
+    *(--stk) = (INT32U)0x00000014L; //s14
+    *(--stk) = (INT32U)0x00000013L; //s13
+    *(--stk) = (INT32U)0x00000012L; //s12
+    *(--stk) = (INT32U)0x00000011L; //s11
+    *(--stk) = (INT32U)0x00000010L; //s10
+    *(--stk) = (INT32U)0x00000009L; //s9
+    *(--stk) = (INT32U)0x00000008L; //s8
+    *(--stk) = (INT32U)0x00000007L; //s7
+    *(--stk) = (INT32U)0x00000006L; //s6
+    *(--stk) = (INT32U)0x00000005L; //s5
+    *(--stk) = (INT32U)0x00000004L; //s4
+    *(--stk) = (INT32U)0x00000003L; //s3
+    *(--stk) = (INT32U)0x00000002L; //s2
+    *(--stk) = (INT32U)0x00000001L; //s1
+    *(--stk) = (INT32U)0x00000000L; //s0
 #endif
                                                  /* Registers stacked as if auto-saved on exception    */
     *(stk)    = (INT32U)0x01000000L;             /* xPSR                                               */
@@ -228,25 +228,25 @@ OS_STK *OSTaskStkInit (void (*task)(void *p_arg), void *p_arg, OS_STK *ptos, INT
     *(--stk)  = (INT32U)0x01010101L;             /* R1                                                 */
     *(--stk)  = (INT32U)p_arg;                   /* R0 : argument                                      */
 
-#if (__FPU_PRESENT==1)&&(__FPU_USED==1)	
-	*(--stk) = (INT32U)0x00000031L; //s31
-	*(--stk) = (INT32U)0x00000030L; //s30
-	*(--stk) = (INT32U)0x00000029L; //s29
-	*(--stk) = (INT32U)0x00000028L; //s28
-	*(--stk) = (INT32U)0x00000027L; //s27
-	*(--stk) = (INT32U)0x00000026L; //s26	
-	*(--stk) = (INT32U)0x00000025L; //s25
-	*(--stk) = (INT32U)0x00000024L; //s24
-	*(--stk) = (INT32U)0x00000023L; //s23
-	*(--stk) = (INT32U)0x00000022L; //s22
-	*(--stk) = (INT32U)0x00000021L; //s21
-	*(--stk) = (INT32U)0x00000020L; //s20
-	*(--stk) = (INT32U)0x00000019L; //s19
-	*(--stk) = (INT32U)0x00000018L; //s18
-	*(--stk) = (INT32U)0x00000017L; //s17
-	*(--stk) = (INT32U)0x00000016L; //s16
+#if (__FPU_PRESENT==1)&&(__FPU_USED==1)
+    *(--stk) = (INT32U)0x00000031L; //s31
+    *(--stk) = (INT32U)0x00000030L; //s30
+    *(--stk) = (INT32U)0x00000029L; //s29
+    *(--stk) = (INT32U)0x00000028L; //s28
+    *(--stk) = (INT32U)0x00000027L; //s27
+    *(--stk) = (INT32U)0x00000026L; //s26
+    *(--stk) = (INT32U)0x00000025L; //s25
+    *(--stk) = (INT32U)0x00000024L; //s24
+    *(--stk) = (INT32U)0x00000023L; //s23
+    *(--stk) = (INT32U)0x00000022L; //s22
+    *(--stk) = (INT32U)0x00000021L; //s21
+    *(--stk) = (INT32U)0x00000020L; //s20
+    *(--stk) = (INT32U)0x00000019L; //s19
+    *(--stk) = (INT32U)0x00000018L; //s18
+    *(--stk) = (INT32U)0x00000017L; //s17
+    *(--stk) = (INT32U)0x00000016L; //s16
 #endif
-		
+
                                                 /* Remaining registers saved on process stack         */
     *(--stk)  = (INT32U)0x11111111L;             /* R11                                                */
     *(--stk)  = (INT32U)0x10101010L;             /* R10                                                */
@@ -335,18 +335,13 @@ void  OSTimeTickHook (void)
 }
 #endif
 
-#if OS_CPU_HOOKS_EN > 0u && OS_VERSION > 290u 
+#if OS_CPU_HOOKS_EN > 0u && OS_VERSION > 290u
 
 void OSTaskReturnHook(OS_TCB *ptcb)
-{ 
-	(void)ptcb; 
-} 
+{
+    (void)ptcb;
+}
 
 #endif
-
-
-
-
-
 
 /*----------------------- (C) COPYRIGHT @ 2012 liycobl -----------------  end of file -----------------*/
