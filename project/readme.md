@@ -69,27 +69,9 @@ xmind + OG
 	-[] 板子外接蓝牙的玄学问题
 
 ## P6 p6-PWM-motor
-	- 基于 T2 & FW3
-	- 电机编号
-```
-         HEAD
-       (X axis)
-  (cw)M4      M1(acw)
-       \      /
-        \    /
-         \--/
-  Y      |  |
-         /--\
-        /    \
-       /      \
- (acw)M3      M2(cw)
-```
-	- 对应转接板接口
-		MTR[1:4]
-	- 对应GPIO口
-		PA[8:11]
-	- 对应定时器通道
-		TIM1_CH[1:4] (AF01)
+	- 基于 T2 
+		- FW6/FW6-motor-PWM
+	- 通过PWM控制以及延时，完成电调的初始化，并让四个桨转起来。
 
 ## P7 p7-Capture-RCVR
 	- FS-i6 遥控器通道对应关系

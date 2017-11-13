@@ -57,3 +57,30 @@ GPIO_init_4_BTN_EXTI();
 	- fputc();
 	- 用了原子哥的代码，大概知道是个怎么个流程，没有深究。
 
+## FW6 FW6-motor-PWM:
+	- usage:
+		- motor_pwm_init();
+		- motor_pwm_NO = motor_pwm_max; /min;
+		- motor_pwm_NO = motor_pwm_range(motor_pwm_NO+delta);
+		- NO = 1, 2, 3, 4
+	- base on FW3
+	- 电机编号如下图
+```
+         HEAD
+       (X axis)
+  (cw)M4      M1(acw)
+       \      /
+        \    /
+         \--/
+  Y      |  |
+         /--\
+        /    \
+       /      \
+ (acw)M3      M2(cw)
+```
+	- 对应转接板接口
+		MTR[1:4]
+	- 对应GPIO口
+		PA[8:11]
+	- 对应定时器通道(AF01)
+		TIM1_CH[1:4]
