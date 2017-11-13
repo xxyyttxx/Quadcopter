@@ -32,7 +32,7 @@ int main(void)
 	delay(1100);
 	motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
 	delay(5000);
-	motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_range(motor_pwm_min+300);
+	motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;//motor_pwm_range(motor_pwm_min+300);
 	
 	int c = 0;
 	uart_init(38400);
