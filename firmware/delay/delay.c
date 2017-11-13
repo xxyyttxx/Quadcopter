@@ -9,6 +9,12 @@
 #include "delay.h"
 
 __IO uint32_t uwTimingDelay;
+/* 
+__IO的说明
+定义在 "core_cm4.h"
+__IO __I __O -> volatile -> 防止多任务使用的资源被优化
+不是指针的参数以及返回值就不要用这个修饰了
+*/
 
 /// @brief  Inserts a delay time.
 /// @param  nTime: specifies the delay time length, in milliseconds.
@@ -37,7 +43,7 @@ void SysTick_Handler(void)
 
 void delayinit (void)
 {
-  /* SysTick end of count event each 10ms */
+  /* SysTick end of count event each 1ms */
   RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);

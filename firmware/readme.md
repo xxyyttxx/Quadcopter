@@ -19,9 +19,8 @@
 ## FW2 delay:
 	- 把原本官方工程的systick软延时提取过来了
 	- 依赖systick
-	- 因为 extern uwTimingDelay，所以也可用来做计时。
-	- "core_cm4.h" __IO __I __O -> volatile -> 防止多任务使用的资源被优化
-	- 不是指针的参数返回值就算了
+	- 实现上是 1 systick/ms，所以 delay 的参数就是要延时的毫秒数。
+	- 因为递减计时的变量 uwTimingDelay 设定成全局变量，所以也可用来做外部计时。
 ```	
 extern __IO uint32_t uwTimingDelay;
 void delayinit (void);
@@ -30,7 +29,7 @@ void delay (uint32_t ticks);
 
 ## FW3 LD2-PWM:
 	- usage: 
-		- modify pwm_arr
+		- 预定义 pwm_arr 宏
 		- GPIO_init_4_LD2_PWM();
 		- pwm_LD2 = pwm_range(x);
 	- 绿色的用户LED LD2 - PA5 - TIM2_CH1
