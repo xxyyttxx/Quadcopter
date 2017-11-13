@@ -22,8 +22,8 @@
 
 /* Exported constants --------------------------------------------------------*/
 #define motor_pwm_arr (2500-1)
-#define motor_pwm_max motor_pwm_arr
-#define motor_pwm_min 1000
+#define motor_pwm_max 2000 // 不能给满 要留余量
+#define motor_pwm_min 1000 // 电调和接收机都是这样的
 
 
 
