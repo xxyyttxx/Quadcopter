@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\uart-nucleo;..\..\firmware\delay;..\p6-PWM-motor\application</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\uart-nucleo;..\..\firmware\delay;..\..\firmware\FW6-motor-PWM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,11 +773,6 @@
               <FileType>1</FileType>
               <FilePath>.\application\main.c</FilePath>
             </File>
-            <File>
-              <FileName>motor-PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\p6-PWM-motor\application\motor-PWM.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -792,6 +787,11 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\firmware\delay\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor-PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW6-motor-PWM\motor-PWM.c</FilePath>
             </File>
           </Files>
         </Group>
