@@ -29,6 +29,7 @@ int main(void)
 	uart_init(38400);
 	for (;;) {
 		printf_("c = %d \r\n", c++);
+//		printf_("TIM1->CNT = %d \r\n", TIM1->CNT);
 	}
 
   /* Infinite loop */
