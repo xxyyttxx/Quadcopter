@@ -158,7 +158,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>\Mac\Home\code\GitHub\Quadcopter\project\p7-PWM-RCV\application\PWM-RCV.c</Filename>
+          <Filename>\\Mac\Home\Mac\Home\code\GitHub\Quadcopter\project\p7-PWM-RCV\application\PWM-RCV.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\Templates\application/PWM-RCV.c\116</Expression>
         </Bp>
@@ -994,19 +994,6 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>4</GroupNumber>
-      <FileNumber>59</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>.\application\PWM-RCV.c</PathWithFileName>
-      <FilenameWithoutPath>PWM-RCV.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
   </Group>
 
   <Group>
@@ -1015,6 +1002,19 @@
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>59</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\firmware\FW7-PWM-RCV\PWM-RCV.c</PathWithFileName>
+      <FilenameWithoutPath>PWM-RCV.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
     <File>
       <GroupNumber>5</GroupNumber>
       <FileNumber>60</FileNumber>

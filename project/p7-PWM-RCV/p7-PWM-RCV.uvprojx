@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\uart-nucleo;..\..\firmware\FW6-motor-PWM</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\uart-nucleo;..\..\firmware\FW6-motor-PWM;..\..\firmware\FW7-PWM-RCV</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,16 +773,16 @@
               <FileType>1</FileType>
               <FilePath>.\application\main.c</FilePath>
             </File>
-            <File>
-              <FileName>PWM-RCV.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\application\PWM-RCV.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>FW</GroupName>
           <Files>
+            <File>
+              <FileName>PWM-RCV.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW7-PWM-RCV\PWM-RCV.c</FilePath>
+            </File>
             <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
