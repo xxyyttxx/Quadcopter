@@ -69,12 +69,20 @@ xmind + OG
 	-[] 板子外接蓝牙的玄学问题
 
 ## P6 p6-PWM-motor
-	- 基于 T2 
+	- 基于 T2
+		- FW2/delay
+		- FW5/uart-nucleo
 		- FW6/FW6-motor-PWM
 	- 通过PWM控制以及延时，完成电调的初始化，并让四个桨转起来。
 
 ## P7 p7-Capture-RCVR
+	- 基于 T2
+		- FW2/delay
+		- FW5/uart-nucleo
+		- FW6/FW6-motor-PWM
+	- 把接收机一次PWM的高电平时间(us)记录下来，并通过串口输出
 	- FS-i6 遥控器默认通道对应关系
+	- 通道 103.5Hz 占空比 10%~20%
 ```
            ______           ______  
           /      \         /      \ 
