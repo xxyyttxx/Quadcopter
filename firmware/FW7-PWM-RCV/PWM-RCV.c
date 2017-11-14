@@ -10,7 +10,7 @@
 #include "PWM-RCV.h"
 
 /* Private macro ------------------------------------------------------------*/
-// var name transfer
+// 变量名宏定义：接收机通道 到 定时器通道的映射
 #define u16Tim3IC3 u16Rcvr_ch4
 #define u16Tim3IC4 u16Rcvr_ch3
 #define u16Tim3IC1 u16Rcvr_ch2

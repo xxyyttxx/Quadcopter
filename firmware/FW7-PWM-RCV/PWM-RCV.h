@@ -16,7 +16,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
-#include <inttypes.h>
 #include <stdint.h>
 
 
@@ -38,7 +37,6 @@ extern uint16_t u16Rcvr_ch4;
   */
 void RCV_IC_init (void);
 void TIM3_IRQHandler(void);
-//void TIM3_IRQHandler(void);
 
 #ifdef __cplusplus
 }
