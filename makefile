@@ -13,8 +13,12 @@ create-stdp-proj:
 		./Lib2Proj.sh; \
 	fi
 
+zip: clean
+	zip -x "*/\.*" -x "\.*" -r Quadcopter.zip firmware project stdperiph ucosii
+
 clean:
 	rm -f project/*/Objects/* project/*/Listings/* project/*/DebugConfig/* project/*/*.uvguix.* project/*/*.scvd
+	rm Quadcopter.zip
 
 clean_root:
 	rm -f *.bak *.ddk *.edk *.lst *.lnp *.mpf *.mpj *.obj *.omf *.plg *.rpt *.tmp *.__i *.crf *.o *.d *.axf *.tra *.dep JLinkLog.txt *.iex *.htm *.sct *.map
