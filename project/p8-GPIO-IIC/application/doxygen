@@ -1,0 +1,7 @@
+/** @brief IIC发送一个字节.
+    @param 要发送的字节数据
+    @retval int
+            1 从机有应答
+            0 从机无应答
+    @notes 
+*/
