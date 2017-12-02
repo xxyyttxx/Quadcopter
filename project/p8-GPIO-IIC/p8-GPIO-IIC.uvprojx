@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\uart-nucleo</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\uart-nucleo;..\..\firmware\FW8-gpio-iic-mpu6050-rawdata</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -776,12 +776,12 @@
             <File>
               <FileName>gpio_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application\gpio_i2c.c</FilePath>
+              <FilePath>..\..\firmware\FW8-gpio-iic-mpu6050-rawdata\gpio_i2c.c</FilePath>
             </File>
             <File>
               <FileName>gpio_mpu6050.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application\gpio_mpu6050.c</FilePath>
+              <FilePath>..\..\firmware\FW8-gpio-iic-mpu6050-rawdata\gpio_mpu6050.c</FilePath>
             </File>
           </Files>
         </Group>

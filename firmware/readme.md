@@ -121,3 +121,25 @@ left/right 偏航(4)         滚转(1)
 | PC[6:9]  | RCV[1:4] | TIM3_CH[1:4] | AF02 |
 | PA[6:7]  | RCV[5:6] | TIM3_CH[1:2] | AF02 |
 | PA[8:11] | MTR[1:4] | TIM1_CH[1:4] | AF01 |
+
+## FW8-gpio-iic-mpu6050-rawdata
+	- usage:
+```
+#include "gpio_mpu6050.h"
+
+MPU_Init();
+
+acc_correct();
+
+gyro_correct();
+
+read ax_cc, ay_cc, az_cc, gx_cc, gy_cc, gz_cc
+
+```
+	- 利用位带实现51类似的GPIO控制功能 (gpio_sys.h)
+	- GPIO模拟IIC (gpio_i2c.x)
+| GPIO | DO-What |
+|------|---------|
+| PB4  | SDL     |
+| PB5  | SDA     |
+	- 利用 gpio_i2c.x 完成对 mpu6050 的读写操作，并封装初始化和6轴原始数据的读取 (gpio_mpu6050.x)
