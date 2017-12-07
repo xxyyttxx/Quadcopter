@@ -46,6 +46,6 @@ void delayinit (void)
   /* SysTick end of count event each 1ms */
   RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000); // 见19/20/21讲笔记
 }
 
