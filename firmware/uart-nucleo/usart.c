@@ -50,7 +50,7 @@ void _sys_exit(int x)
 //重定义fputc函数
 int fputc(int ch, FILE *f)
 {
-	while((USART2->SR&0X40)==0);//循环发送,直到发送完毕
+	while((USART2->SR&0X40)==0);//循环发送,直到发送完毕  --  发送不用中断
 	USART2->DR = (u8) ch;
 	return ch;
 }
@@ -124,7 +124,7 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 #if SYSTEM_SUPPORT_OS 		//如果SYSTEM_SUPPORT_OS为真，则需要支持OS.
 	OSIntEnter();
 #endif
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  ///接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 		Res =USART_ReceiveData(USART2);//(USART2->DR);	//读取接收到的数据
 
@@ -133,7 +133,7 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 			if(USART_RX_STA&0x4000)//接收到了0x0d
 			{
 				if(Res!=0x0a)USART_RX_STA=0;//接收错误,重新开始
-				else USART_RX_STA|=0x8000;	//接收完成了
+				else USART_RX_STA|=0x8000, USART_RX_BUF[USART_RX_STA&0X3FFF]=0;	//接收完成了
 			}
 			else //还没收到0X0D
 			{
@@ -142,7 +142,7 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 				{
 					USART_RX_BUF[USART_RX_STA&0X3FFF]=Res;
 					USART_RX_STA++;
-					if(USART_RX_STA>(USART_REC_LEN-1))USART_RX_STA=0;//接收数据错误,重新开始接收
+					if(USART_RX_STA>(USART_REC_LEN-2))USART_RX_STA=0;//接收数据错误,重新开始接收
 				}
 			}
 		}
