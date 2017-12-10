@@ -1,12 +1,16 @@
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
+#include "EVAL_define.h"
 #include "delay.h"
+#include <string.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern uint8_t aTxBuffer[];
+extern uint8_t aRxBuffer[];
 extern uint8_t ubNbrOfDataToTransfer;
 extern uint8_t ubNbrOfDataToRead;
 extern __IO uint8_t ubTxCounter;
@@ -31,30 +35,32 @@ int main(void)
 
     /* USART configuration */
     USART_Config();
-
-    /* Enable the MY_COM1 Transmit interrupt: this interrupt is generated when the
-         MY_COM1 transmit data register is empty */
-    USART_ITConfig(MY_COM1, USART_IT_TXE, ENABLE); /// 缓冲区+允许中断
-
-    /* Wait until MY_COM1 send the TxBuffer */
-    while(ubTxCounter < ubNbrOfDataToTransfer) /// 暴力循环等待（没有OS）
-    {}
-
-    /* The software must wait until TC=1. The TC flag remains cleared during all data
-         transfers and it is set by hardware at the last frame’s end of transmission*/
-    while (USART_GetFlagStatus(MY_COM1, USART_FLAG_TC) == RESET) /// 暴力循环等待2（没有OS）
-    {}
-
-    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
-         MY_COM1 receive data register is not empty */
-    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE); /// 缓冲区+允许中断
-
-    /* Wait until MY_COM1 receive the RxBuffer */
-    while(uhRxCounter < ubNbrOfDataToRead) /// 暴力循环等待（没有OS）
-    {}
-
-    while (1) /// 死循环
+    
+    for (;;) /// 死循环
     {
+        ubTxCounter = 0;
+        /* Enable the MY_COM1 Transmit interrupt: this interrupt is generated when the
+             MY_COM1 transmit data register is empty */
+        USART_ITConfig(MY_COM1, USART_IT_TXE, ENABLE); /// 缓冲区+允许中断
+
+        /* Wait until MY_COM1 send the TxBuffer */
+        while(ubTxCounter < ubNbrOfDataToTransfer) /// 暴力循环等待（没有OS）
+        {}
+
+        /* The software must wait until TC=1. The TC flag remains cleared during all data
+             transfers and it is set by hardware at the last frame’s end of transmission*/
+        while (USART_GetFlagStatus(MY_COM1, USART_FLAG_TC) == RESET) /// 暴力循环等待2（没有OS）
+        {}
+
+        uhRxCounter = 0;
+        /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
+             MY_COM1 receive data register is not empty */
+        USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE); /// 缓冲区+允许中断
+
+        /* Wait until MY_COM1 receive the RxBuffer */
+        while(uhRxCounter < ubNbrOfDataToRead) /// 暴力循环等待（没有OS）
+        {}
+        strncpy((char*)aTxBuffer+2, (char*)aRxBuffer, ubNbrOfDataToRead);
     }
 }
 
