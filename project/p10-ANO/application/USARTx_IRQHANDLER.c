@@ -36,27 +36,27 @@ __IO uint16_t uhRxCounter = 0;
     */
 void USARTx_IRQHANDLER(void) /// NVIC 中断版本的收发
 {
-    if(USART_GetITStatus(EVAL_COM1, USART_IT_RXNE) != RESET)
+    if(USART_GetITStatus(MY_COM1, USART_IT_RXNE) != RESET)
     {
         /* Read one byte from the receive data register */
-        aRxBuffer[uhRxCounter++] = (USART_ReceiveData(EVAL_COM1) & 0x7F);
+        aRxBuffer[uhRxCounter++] = (USART_ReceiveData(MY_COM1) & 0x7F);
 
         if(uhRxCounter == ubNbrOfDataToRead)
         {
-            /* Disable the EVAL_COM1 Receive interrupt */
-            USART_ITConfig(EVAL_COM1, USART_IT_RXNE, DISABLE);
+            /* Disable the MY_COM1 Receive interrupt */
+            USART_ITConfig(MY_COM1, USART_IT_RXNE, DISABLE);
         }
     }
 
-    if(USART_GetITStatus(EVAL_COM1, USART_IT_TXE) != RESET)
+    if(USART_GetITStatus(MY_COM1, USART_IT_TXE) != RESET)
     {
         /* Write one byte to the transmit data register */
-        USART_SendData(EVAL_COM1, aTxBuffer[ubTxCounter++]);
+        USART_SendData(MY_COM1, aTxBuffer[ubTxCounter++]);
 
         if(ubTxCounter == ubNbrOfDataToTransfer)
         {
-            /* Disable the EVAL_COM1 Transmit interrupt */
-            USART_ITConfig(EVAL_COM1, USART_IT_TXE, DISABLE);
+            /* Disable the MY_COM1 Transmit interrupt */
+            USART_ITConfig(MY_COM1, USART_IT_TXE, DISABLE);
         }
     }
 }
