@@ -773,6 +773,16 @@
               <FileType>1</FileType>
               <FilePath>.\application\main.c</FilePath>
             </File>
+            <File>
+              <FileName>EVAL_define.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\EVAL_define.c</FilePath>
+            </File>
+            <File>
+              <FileName>USARTx_IRQHANDLER.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\USARTx_IRQHANDLER.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
