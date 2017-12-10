@@ -16,3 +16,4 @@ Thumbs.db
 # 目录和文件不一样！！！
 # 我选择规避，尽量不要用!做文件夹屏蔽的差集
 utility/tterm/tterm
+cscope.*
