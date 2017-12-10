@@ -1,5 +1,3 @@
-// USART/USART_HyperTerminal
-// ANO_DT
 
 typedef enum 
 {
@@ -20,6 +18,30 @@ typedef enum
 #define EVAL_COM1_RX_SOURCE              GPIO_PinSource11
 #define EVAL_COM1_RX_AF                  GPIO_AF_USART3
 #define EVAL_COM1_IRQn                   USART3_IRQn
+
+USART_TypeDef* COM_USART[COMn] = {EVAL_COM1}; 
+
+GPIO_TypeDef* COM_TX_PORT[COMn] = {EVAL_COM1_TX_GPIO_PORT};
+ 
+GPIO_TypeDef* COM_RX_PORT[COMn] = {EVAL_COM1_RX_GPIO_PORT};
+
+const uint32_t COM_USART_CLK[COMn] = {EVAL_COM1_CLK};
+
+const uint32_t COM_TX_PORT_CLK[COMn] = {EVAL_COM1_TX_GPIO_CLK};
+ 
+const uint32_t COM_RX_PORT_CLK[COMn] = {EVAL_COM1_RX_GPIO_CLK};
+
+const uint16_t COM_TX_PIN[COMn] = {EVAL_COM1_TX_PIN};
+
+const uint16_t COM_RX_PIN[COMn] = {EVAL_COM1_RX_PIN};
+ 
+const uint16_t COM_TX_PIN_SOURCE[COMn] = {EVAL_COM1_TX_SOURCE};
+
+const uint16_t COM_RX_PIN_SOURCE[COMn] = {EVAL_COM1_RX_SOURCE};
+ 
+const uint16_t COM_TX_AF[COMn] = {EVAL_COM1_TX_AF};
+ 
+const uint16_t COM_RX_AF[COMn] = {EVAL_COM1_RX_AF};
 
 
 /**
