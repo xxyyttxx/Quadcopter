@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\FW6-motor-PWM;..\..\firmware\FW7-PWM-RCV;..\..\firmware\FW8-gpio-iic-mpu6050-rawdata</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -783,6 +783,11 @@
               <FileType>1</FileType>
               <FilePath>.\application\USARTx_IRQHANDLER.c</FilePath>
             </File>
+            <File>
+              <FileName>data_transfer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\data_transfer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -792,6 +797,26 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\firmware\delay\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor-PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW6-motor-PWM\motor-PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM-RCV.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW7-PWM-RCV\PWM-RCV.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio_mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW8-gpio-iic-mpu6050-rawdata\gpio_mpu6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\firmware\FW8-gpio-iic-mpu6050-rawdata\gpio_i2c.c</FilePath>
             </File>
           </Files>
         </Group>

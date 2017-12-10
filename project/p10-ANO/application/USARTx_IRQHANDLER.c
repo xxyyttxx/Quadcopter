@@ -1,25 +1,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "EVAL_define.h"
+#include "data_transfer.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define USARTx_IRQHANDLER   USART2_IRQHandler
-#define TXBUFFERSIZE     (countof(aTxBuffer) - 1)
-#define RXBUFFERSIZE     0x20
 
 /* Private macro -------------------------------------------------------------*/
-#define countof(a)   (sizeof(a) / sizeof(*(a)))
-
 /* Private variables ---------------------------------------------------------*/
-uint8_t aTxBuffer[] = "\n\rUSART Hyperterminal Interrupts Example: USART-Hyperterminal\
- communication using Interrupt\n\r";
-uint8_t aRxBuffer[RXBUFFERSIZE];
-uint8_t ubNbrOfDataToTransfer = TXBUFFERSIZE;
-uint8_t ubNbrOfDataToRead = RXBUFFERSIZE;
-__IO uint8_t ubTxCounter = 0;
-__IO uint16_t uhRxCounter = 0;
-
+uint8_t *aTxBuffer;
+uint32_t ubNbrOfDataToTransfer;
+uint32_t ubTxCounter;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -40,24 +32,34 @@ void USARTx_IRQHANDLER(void) /// NVIC 中断版本的收发
     if(USART_GetITStatus(MY_COM1, USART_IT_RXNE) != RESET)
     {
         /* Read one byte from the receive data register */
-        aRxBuffer[uhRxCounter++] = (USART_ReceiveData(MY_COM1) & 0x7F);
-
-        if(uhRxCounter == ubNbrOfDataToRead)
-        {
-            /* Disable the MY_COM1 Receive interrupt */
-            USART_ITConfig(MY_COM1, USART_IT_RXNE, DISABLE);
-        }
+        ANO_DT_Data_Receive_Prepare(USART_ReceiveData(MY_COM1)); /// 之前这里有一个 & 0x7F：应该是用来处理 7O2 的，因为只有7个数据位，加上串口是LSB先发送，当时没有发现，理论上是要删掉的，当时由于只用
     }
 
     if(USART_GetITStatus(MY_COM1, USART_IT_TXE) != RESET)
     {
         /* Write one byte to the transmit data register */
-        USART_SendData(MY_COM1, aTxBuffer[ubTxCounter++]);
+        USART_SendData(MY_COM1, aTxBuffer[ubTxCounter]);
 
-        if(ubTxCounter == ubNbrOfDataToTransfer)
+        if(++ubTxCounter == ubNbrOfDataToTransfer)
         {
             /* Disable the MY_COM1 Transmit interrupt */
             USART_ITConfig(MY_COM1, USART_IT_TXE, DISABLE);
         }
     }
+}
+
+void Usart2_Send(uint8_t *data_to_send, uint32_t length) {
+    /* Wait until MY_COM1 send the TxBuffer */
+    while (ubTxCounter < ubNbrOfDataToTransfer); // if os -> swi(控制资源) // 50*9/38400 = 0.0117s ...虽然是在自旋，但是可以被其他优先级更高的任务抢占
+    /* The software must wait until TC=1. The TC flag remains cleared during all data
+             transfers and it is set by hardware at the last frame’s end of transmission*/
+    // while (USART_GetFlagStatus(MY_COM1, USART_FLAG_TC) == RESET);
+    // USART_ClearFlag(MY_COM1, USART_FLAG_TC);
+
+    aTxBuffer = data_to_send;
+    ubNbrOfDataToTransfer = length;
+    ubTxCounter = 0;
+    /* Enable the MY_COM1 Transmit interrupt: this interrupt is generated when the
+         MY_COM1 transmit data register is empty */
+    USART_ITConfig(MY_COM1, USART_IT_TXE, ENABLE);
 }

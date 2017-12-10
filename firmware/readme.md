@@ -105,6 +105,9 @@ left/right Z轴逆/顺时针(4)  X顺/逆时针(1)
 
   up/down  油门(3)         俯仰(2)
 left/right 偏航(4)         滚转(1)
+
+  up/down  Throttle(3)     Pitch(2)
+left/right Yaw(4)          Roll(1)
 ```
 	- 通道 103.5Hz 占空比 10%~20%
 	- 接收机通道1-6对应转接板6-1

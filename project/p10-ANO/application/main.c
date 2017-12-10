@@ -3,21 +3,17 @@
 #include "stm32f4xx_conf.h"
 #include "EVAL_define.h"
 #include "delay.h"
-#include <string.h>
+#include "data_transfer.h"
+#include "gpio_mpu6050.h"
+#include "PWM-RCV.h"
+#include "motor-PWM.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern uint8_t aTxBuffer[];
-extern uint8_t aRxBuffer[];
-extern uint8_t ubNbrOfDataToTransfer;
-extern uint8_t ubNbrOfDataToRead;
-extern __IO uint8_t ubTxCounter;
-extern __IO uint16_t uhRxCounter;
 
 /* Private function prototypes -----------------------------------------------*/
-static void NVIC_Config(void);
 static void USART_Config(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -29,38 +25,29 @@ static void USART_Config(void);
     */
 int main(void)
 {
-
-    /* NVIC configuration */
-    NVIC_Config();
+    delayinit();
+    motor_pwm_init();
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;
+    delay(2000);
+    motor_pwm_4 = motor_pwm_min;
+    delay(1100);
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
+    // delay(5000);
+    RCV_IC_init();
+    MPU_Init();
 
     /* USART configuration */
     USART_Config();
-    
-    for (;;) /// 死循环
-    {
-        ubTxCounter = 0;
-        /* Enable the MY_COM1 Transmit interrupt: this interrupt is generated when the
-             MY_COM1 transmit data register is empty */
-        USART_ITConfig(MY_COM1, USART_IT_TXE, ENABLE); /// 缓冲区+允许中断
 
-        /* Wait until MY_COM1 send the TxBuffer */
-        while(ubTxCounter < ubNbrOfDataToTransfer) /// 暴力循环等待（没有OS）
-        {}
+    for (int i=0;;) {
+        delay(1);
+        
+        if (++i % 10 == 0){
+            acc_correct();
+            gyro_correct();
+        }
 
-        /* The software must wait until TC=1. The TC flag remains cleared during all data
-             transfers and it is set by hardware at the last frame’s end of transmission*/
-        while (USART_GetFlagStatus(MY_COM1, USART_FLAG_TC) == RESET) /// 暴力循环等待2（没有OS）
-        {}
-
-        uhRxCounter = 0;
-        /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
-             MY_COM1 receive data register is not empty */
-        USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE); /// 缓冲区+允许中断
-
-        /* Wait until MY_COM1 receive the RxBuffer */
-        while(uhRxCounter < ubNbrOfDataToRead) /// 暴力循环等待（没有OS）
-        {}
-        strncpy((char*)aTxBuffer+2, (char*)aRxBuffer, ubNbrOfDataToRead);
+        ANO_DT_Data_Exchange();
     }
 }
 
@@ -72,8 +59,16 @@ int main(void)
 static void USART_Config(void)
 {
     USART_InitTypeDef USART_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
-/* USARTx configuration ------------------------------------------------------*/
+    /* Enable the USARTx Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = MY_COM1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    /* USARTx configuration ------------------------------------------------------*/
     /* USARTx configured as follows: 38400 8N1
                 - BaudRate = 38400 baud
                 - Word Length = 8 Bits
@@ -90,21 +85,4 @@ static void USART_Config(void)
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
     MY_COMInit(COM1, &USART_InitStructure);
-}
-
-/**
-    * @brief  Configures the nested vectored interrupt controller.
-    * @param  None
-    * @retval None
-    */
-static void NVIC_Config(void)
-{
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    /* Enable the USARTx Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = MY_COM1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
 }
