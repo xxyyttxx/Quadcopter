@@ -3,7 +3,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define USARTx_IRQHANDLER   USART3_IRQHandler
+#define USARTx_IRQHANDLER   USART2_IRQHandler
 #define TXBUFFERSIZE     (countof(aTxBuffer) - 1)
 #define RXBUFFERSIZE     0x20
 

@@ -4,6 +4,8 @@ typedef enum
     COM1 = 0
 } COM_TypeDef;
 
+#define COMn                             1
+
 #define MY_COM1                        USART2
 #define MY_COM1_CLK                    RCC_APB1Periph_USART2
 #define MY_COM1_TX_PIN                 GPIO_Pin_2
