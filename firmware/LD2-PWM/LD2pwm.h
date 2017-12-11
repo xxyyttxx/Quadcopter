@@ -20,7 +20,9 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-#define pwm_arr 100
+#ifndef pwm_arr
+	#define pwm_arr 100
+#endif
 #define pwm_LD2 (TIM2->CCR1)
 #define pwm_range(x) ((x)>=pwm_arr?pwm_arr-1:(x)<0?0:x) /* danger tri.. */
 /* Exported functions ------------------------------------------------------- */

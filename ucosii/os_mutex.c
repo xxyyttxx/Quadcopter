@@ -732,4 +732,3 @@ static  void  OSMutex_RdyAtPrio (OS_TCB  *ptcb,
 
 
 #endif                                                     /* OS_MUTEX_EN                              */
-	 	   	  		 			 	    		   		 		 	 	 			 	    		   	 			 	  	 		 				 		  			 		 					 	  	  		      		  	   		      		  	 		 	      		   		 		  	 		 	      		  		  		  

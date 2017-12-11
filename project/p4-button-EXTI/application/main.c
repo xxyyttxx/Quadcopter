@@ -32,7 +32,7 @@ int main(void)
   /* Configure EXTI Line13 in interrupt mode */
   GPIO_init_4_BTN_EXTI();
 	
-  /* Generate software interrupt: simulate a falling edge applied on EXTI0 line */
+  /* Generate software interrupt: simulate a falling edge applied on EXTI13 line */
   EXTI_GenerateSWInterrupt(EXTI_Line13);
 
   /* Infinite loop */
