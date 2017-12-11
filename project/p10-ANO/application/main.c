@@ -7,6 +7,7 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+void my2_ANO_DT_Data_Receive_Anl();
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -39,6 +40,10 @@ int main(void)
     /* USART configuration */
     USART_Config();
 
+    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
+     MY_COM1 receive data register is not empty */
+    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
+    
     for (int i=0;;) {
         delay(1);
         
@@ -48,6 +53,7 @@ int main(void)
         }
 
         ANO_DT_Data_Exchange();
+        my2_ANO_DT_Data_Receive_Anl();
     }
 }
 

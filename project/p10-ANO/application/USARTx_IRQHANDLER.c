@@ -9,9 +9,9 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-uint8_t *aTxBuffer;
-uint32_t ubNbrOfDataToTransfer;
-uint32_t ubTxCounter;
+static uint8_t *aTxBuffer;
+static uint32_t ubNbrOfDataToTransfer;
+static uint32_t ubTxCounter;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -62,4 +62,21 @@ void Usart2_Send(uint8_t *data_to_send, uint32_t length) {
     /* Enable the MY_COM1 Transmit interrupt: this interrupt is generated when the
          MY_COM1 transmit data register is empty */
     USART_ITConfig(MY_COM1, USART_IT_TXE, ENABLE);
+}
+
+static u8 *RxBuf;
+static uint32_t RxLen;
+void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length) {
+    if (!RxLen && !!length) {
+        RxBuf = RxBuffer;
+        RxLen = length;
+        USART_ITConfig(MY_COM1, USART_IT_RXNE, DISABLE);
+    } else ; // ignore this RxBuf
+}
+void my2_ANO_DT_Data_Receive_Anl() {
+    if (RxLen) {
+        ANO_DT_Data_Receive_Anl(RxBuf, RxLen);
+        RxLen=0;
+        USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
+    }
 }

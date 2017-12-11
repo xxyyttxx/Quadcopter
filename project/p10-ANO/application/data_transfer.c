@@ -13,7 +13,9 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include <stdio.h>
 
+void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length);
 
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
@@ -87,7 +89,7 @@ void ANO_DT_Data_Exchange(void)
         // ANO_DT_Send_RCData(Rc_Pwm_In[0],Rc_Pwm_In[1],Rc_Pwm_In[2],Rc_Pwm_In[3],Rc_Pwm_In[4],Rc_Pwm_In[5],Rc_Pwm_In[6],Rc_Pwm_In[7],0,0);
         ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, 5,6,7,8,9,10);
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
-        Usart2_Send("here?,why no?", sizeof "here?,why no?");
+        Usart2_Send("\r\nhere?,why no?\r\n", sizeof "\r\nhere?,why no?\r\n");
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_motopwm)
@@ -127,12 +129,14 @@ void ANO_DT_Data_Exchange(void)
 //移植时，用户应根据自身应用的情况，根据使用的通信方式，实现此函数
 void ANO_DT_Send_Data(u8 *dataToSend , u8 length)
 {
-    void Usart2_Send(uint8_t *data_to_send, uint32_t length);
-    Usart2_Send(data_to_send, length);
+    void Usart2_Send(uint8_t *, uint32_t);
+    Usart2_Send(dataToSend, length);
 }
 
 static void ANO_DT_Send_Check(u8 head, u8 check_sum)
 {
+    static u8 data_to_send[10]; // 不能和外部用同一个缓冲区
+
     data_to_send[0]=0xAA;
     data_to_send[1]=0xAA;
     data_to_send[2]=0xEF;
@@ -192,7 +196,7 @@ void ANO_DT_Data_Receive_Prepare(u8 data)
     {
         state = 0;
         RxBuffer[4+_data_cnt]=data;
-        ANO_DT_Data_Receive_Anl(RxBuffer,_data_cnt+5);
+        my1_ANO_DT_Data_Receive_Anl(RxBuffer,_data_cnt+5);
     }
     else
         state = 0;
@@ -239,6 +243,10 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         // ctrl_1.PID[PIDYAW].kd    = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
         ANO_DT_Send_Check(*(data_buf+2),sum);
                 //Param_SavePID();
+        void Usart2_Send(uint8_t *data_to_send, uint32_t length);
+        Usart2_Send("\r\nhere2\r\n", sizeof "\r\nhere2\r\n");
+        static char s[20]; // Usart_Send 是排队并延迟到中断发送，不阻塞。。
+        Usart2_Send(s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
     }
     if(*(data_buf+2)==0X11)                             //PID2
     {
