@@ -246,7 +246,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
         Usart2_Send("\r\nhere2\r\n", sizeof "\r\nhere2\r\n");
         static char s[20]; // Usart_Send 是排队并延迟到中断发送，不阻塞。。
-        Usart2_Send(s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
+        Usart2_Send((uint8_t *)s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
     }
     if(*(data_buf+2)==0X11)                             //PID2
     {
