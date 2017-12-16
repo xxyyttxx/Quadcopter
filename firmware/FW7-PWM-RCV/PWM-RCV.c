@@ -87,7 +87,7 @@ void RCV_IC_init (void) {
             NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
             // TIM1_CC_IRQn 高级定时器与通用定时器的区别 中断号上 misc.h + stm32f4xx.h
             NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
             NVIC_Init(&NVIC_InitStructure);
         }
