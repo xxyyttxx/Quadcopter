@@ -560,6 +560,11 @@ typedef struct
 #define TIM_IT_Break                       ((uint16_t)0x0080)
 #define IS_TIM_IT(IT) ((((IT) & (uint16_t)0xFF00) == 0x0000) && ((IT) != 0x0000))
 
+/// 这个外设库提供的不全面：
+//// 1. 代码层面上没有区分高级寄存器和通用寄存器
+//// 2. F411 的定时器 IC 模式的 SR 还有 4个 CCxOF 位，这里也没有支持。
+/// 可能是为了在ST不同系列芯片外设上的通用性吧。
+
 #define IS_TIM_GET_IT(IT) (((IT) == TIM_IT_Update) || \
                            ((IT) == TIM_IT_CC1) || \
                            ((IT) == TIM_IT_CC2) || \
