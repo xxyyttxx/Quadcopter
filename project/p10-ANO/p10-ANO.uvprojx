@@ -1106,6 +1106,11 @@
               <FileType>1</FileType>
               <FilePath>.\application\data_transfer.c</FilePath>
             </File>
+            <File>
+              <FileName>Attitude.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\Attitude.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

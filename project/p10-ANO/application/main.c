@@ -7,6 +7,7 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "Attitude.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -27,14 +28,16 @@ static void USART_Config(void);
 int main(void)
 {
     delayinit();
+#ifdef ndebug
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;
     delay(2000);
     motor_pwm_4 = motor_pwm_min;
     delay(1100);
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
-    // delay(5000);
+    delay(5000);
     RCV_IC_init();
+#endif
     MPU_Init();
 
     /* USART configuration */
@@ -43,13 +46,14 @@ int main(void)
     /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
-    
+
     for (int i=0;;) {
         delay(1);
-        
+
         if (++i % 10 == 0){
             acc_correct();
             gyro_correct();
+            Attitude(gx_cc, gy_cc, gz_cc, ax_cc, ay_cc, az_cc);
         }
 
         ANO_DT_Data_Exchange();

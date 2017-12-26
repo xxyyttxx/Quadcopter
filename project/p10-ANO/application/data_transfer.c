@@ -13,6 +13,7 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "Attitude.h"
 #include <stdio.h>
 
 void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length);
@@ -69,7 +70,7 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed);
         // ANO_DT_Send_Status(Roll,Pitch,Yaw,baroAlt,0,fly_ready);
         // 姿态结算数据
-        ANO_DT_Send_Status(1.1,1.2,1.3,121,122,1); // armed 是否上锁 0加锁/1解锁
+        ANO_DT_Send_Status(roll,pitch,yaw,121,122,1); // armed 是否上锁 0加锁/1解锁
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_senser)
