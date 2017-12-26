@@ -13,6 +13,7 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "Attitude.h"
 #include <stdio.h>
 
 void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length);
@@ -69,7 +70,7 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Status(float angle_rol, float angle_pit, float angle_yaw, s32 alt, u8 fly_model, u8 armed);
         // ANO_DT_Send_Status(Roll,Pitch,Yaw,baroAlt,0,fly_ready);
         // 姿态结算数据
-        ANO_DT_Send_Status(1.1,1.2,1.3,121,122,1); // armed 是否上锁 0加锁/1解锁
+        ANO_DT_Send_Status(roll,pitch,yaw,121,122,1); // armed 是否上锁 0加锁/1解锁
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_senser)
@@ -109,19 +110,16 @@ void ANO_DT_Data_Exchange(void)
     else if(f.send_pid1)
     {
         f.send_pid1 = 0;
+        /*
+        ANO_DT_Send_PID(1,ctrl_1.PID[PIDROLL].kp,ctrl_1.PID[PIDROLL].ki,ctrl_1.PID[PIDROLL].kd,
+                          ctrl_1.PID[PIDPITCH].kp,ctrl_1.PID[PIDPITCH].ki,ctrl_1.PID[PIDPITCH].kd,
+                          ctrl_1.PID[PIDYAW].kp,ctrl_1.PID[PIDYAW].ki,ctrl_1.PID[PIDYAW].kd);
+        */
         // void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float p2_i,float p2_d,float p3_p,float p3_i,float p3_d);
-        ANO_DT_Send_PID(1,  1.1,1.2,1.3,
-                            1.4,1.5,1.6,
-                            1.7,1.8,1.9);
+        ANO_DT_Send_PID(1, kp, ki, halfT,
+                           1, 2, 3,
+                           4, 5, 6);
     }
-/////////////////////////////////////////////////////////////////////////////////////
-    // else if(f.send_pid1)
-    // {
-    //  f.send_pid1 = 0;
-    //  ANO_DT_Send_PID(1,ctrl_1.PID[PIDROLL].kp,ctrl_1.PID[PIDROLL].ki,ctrl_1.PID[PIDROLL].kd,
-    //                                      ctrl_1.PID[PIDPITCH].kp,ctrl_1.PID[PIDPITCH].ki,ctrl_1.PID[PIDPITCH].kd,
-    //                                      ctrl_1.PID[PIDYAW].kp,ctrl_1.PID[PIDYAW].ki,ctrl_1.PID[PIDYAW].kd);
-    // }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -232,6 +230,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 
     if(*(data_buf+2)==0X10)                             //PID1
     {
+        ANO_DT_Send_Check(*(data_buf+2),sum);
         // ctrl_1.PID[PIDROLL].kp  = 0.001*( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
         // ctrl_1.PID[PIDROLL].ki  = 0.001*( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
         // ctrl_1.PID[PIDROLL].kd  = 0.001*( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
@@ -241,12 +240,15 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         // ctrl_1.PID[PIDYAW].kp    = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
         // ctrl_1.PID[PIDYAW].ki    = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
         // ctrl_1.PID[PIDYAW].kd    = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-        ANO_DT_Send_Check(*(data_buf+2),sum);
                 //Param_SavePID();
+        kp    = 0.001f * ( (*(data_buf+4)<<8)|*(data_buf+5) );
+        ki    = 0.001f * ( (*(data_buf+6)<<8)|*(data_buf+7) );
+        halfT = 0.001f * ( (*(data_buf+8)<<8)|*(data_buf+9) );
+
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
         Usart2_Send("\r\nhere2\r\n", sizeof "\r\nhere2\r\n");
         static char s[20]; // Usart_Send 是排队并延迟到中断发送，不阻塞。。
-        Usart2_Send(s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
+        Usart2_Send((uint8_t *)s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
     }
     if(*(data_buf+2)==0X11)                             //PID2
     {

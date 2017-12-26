@@ -15,8 +15,8 @@ author: tjua @ ES-SS-UESTC © 2017
 
 3. 板载调试器 st-link 驱动安装
 	- [ST-link/v2](http://www.st.com/en/development-tools/debug-hardware-for-stm32-mcus.html)
-	- [STSW-LINK008](http://www.st.com/content/st_com/en/products/development-tools/hardware-development-tools/development-tool-hardware-for-mcus/debug-hardware-for-mcus/debug-hardware-for-stm32-mcus/st-link-v2.html)
-	- Windows 驱动：[en.stsw-link009.zip](http://www.st.com/content/st_com/en/products/embedded-software/development-tool-software/stsw-link008.html)
+	- [STSW-LINK009](http://www.st.com/content/st_com/en/products/development-tools/hardware-development-tools/development-tool-hardware-for-mcus/debug-hardware-for-mcus/debug-hardware-for-stm32-mcus/st-link-v2.html)
+	- Windows 驱动：[en.stsw-link009.zip](http://www.st.com/content/st_com/en/products/embedded-software/development-tool-software/stsw-link009.html)
 
 4. ST标准外设库下载
 	- [STSW-STM32065](http://www.st.com/en/embedded-software/stm32-standard-peripheral-libraries.html)

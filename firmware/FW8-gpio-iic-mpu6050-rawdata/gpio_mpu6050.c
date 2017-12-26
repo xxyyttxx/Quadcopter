@@ -2,6 +2,7 @@
 #include "gpio_i2c.h"
 #include "delay.h"
 
+#define windows_fliter
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +13,7 @@
 /* 量程见init的量程设置以及相关函数 */
 int ax_cc, ay_cc, az_cc;
 int gx_cc, gy_cc, gz_cc;
-#define correct_num 200
+#define correct_num 10
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -423,6 +424,8 @@ uint8_t MPU_Init(void)
     把结果写到全局变量 AB_CC 上
 */
 void acc_correct() {
+    
+#ifdef mean_fliter
     int ax_c = 0, ay_c = 0, az_c = 0; // 忘记初始化了，下面也是，哭
     for (int i=0; i<=cn; i++) {
         short ax, ay, az;
@@ -431,12 +434,27 @@ void acc_correct() {
         ay_c += ay;
         az_c += az;
     }
+#elif defined windows_fliter
+    static int ax_c, ay_c, az_c;
+    static short ax_w[cn], ay_w[cn], az_w[cn];
+    static int wid;
+    ax_c-=ax_w[wid];
+    ay_c-=ay_w[wid];
+    az_c-=az_w[wid];
+    MPU_Get_Accelerometer(ax_w+wid, ay_w+wid, az_w+wid);
+    ax_c+=ax_w[wid];
+    ay_c+=ay_w[wid];
+    az_c+=az_w[wid];
+    if (++wid == cn) wid = 0;
+#endif
     ax_cc = ax_c/cn;
     ay_cc = ay_c/cn;
     az_cc = az_c/cn;
 }
 
 void gyro_correct(){
+
+#ifdef mean_fliter
     int gx_c = 0, gy_c = 0, gz_c = 0;
     for (int i=0; i<=cn; i++) {
         short gx, gy, gz;
@@ -445,8 +463,22 @@ void gyro_correct(){
         gy_c += gy;
         gz_c += gz;
     }
+#elif defined windows_fliter
+    static int gx_c, gy_c, gz_c;
+    static short gx_w[cn], gy_w[cn], gz_w[cn];
+    static int wid;
+    gx_c-=gx_w[wid];
+    gy_c-=gy_w[wid];
+    gz_c-=gz_w[wid];
+    MPU_Get_Gyroscope(gx_w+wid, gy_w+wid, gz_w+wid); /// !!!!
+    gx_c+=gx_w[wid];
+    gy_c+=gy_w[wid];
+    gz_c+=gz_w[wid];
+    if (++wid == cn) wid = 0;
+#endif
     gx_cc = gx_c/cn;
     gy_cc = gy_c/cn;
     gz_cc = gz_c/cn;
 }
+
 #undef cn

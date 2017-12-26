@@ -110,6 +110,8 @@ left/right 偏航(4)         滚转(1)
 left/right Yaw(4)          Roll(1)
 ```
 	- 通道 103.5Hz 占空比 10%~20%
+		- 然而在遥控器设置【RX Setup > Servos Freq】里面是50Hz..
+		- 如果用 USB + NUCLEOF411 5V 给接受机供电，可能会电压不够，导致遥控器报警，这时候可以调整电压报警的阈值。
 	- 接收机通道1-6对应转接板6-1
 	- 对应GPIO口
 		RCVr[1:2] |  RCV[6:5]  |  PA[7:6]

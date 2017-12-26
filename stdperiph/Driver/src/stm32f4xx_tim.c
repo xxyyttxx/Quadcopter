@@ -1900,7 +1900,7 @@ void TIM_CCxNCmd(TIM_TypeDef* TIMx, uint16_t TIM_Channel, uint16_t TIM_CCxN)
 void TIM_ICInit(TIM_TypeDef* TIMx, TIM_ICInitTypeDef* TIM_ICInitStruct)
 {
   /* Check the parameters */
-  assert_param(IS_TIM_LIST1_PERIPH(TIMx));
+  assert_param(IS_TIM_LIST1_PERIPH(TIMx)); ///???
   assert_param(IS_TIM_IC_POLARITY(TIM_ICInitStruct->TIM_ICPolarity));
   assert_param(IS_TIM_IC_SELECTION(TIM_ICInitStruct->TIM_ICSelection));
   assert_param(IS_TIM_IC_PRESCALER(TIM_ICInitStruct->TIM_ICPrescaler));
@@ -2035,7 +2035,7 @@ uint32_t TIM_GetCapture1(TIM_TypeDef* TIMx)
   assert_param(IS_TIM_LIST1_PERIPH(TIMx));
 
   /* Get the Capture 1 Register value */
-  return TIMx->CCR1;
+  return TIMx->CCR1; /// and this will cause the TIMx->SR bit1 CC1IF clear, no necessity to use the trapping function TIM_ClearITPendingBit, refer to RM0383-page350, register description.
 }
 
 /**
@@ -2558,6 +2558,7 @@ void TIM_ClearITPendingBit(TIM_TypeDef* TIMx, uint16_t TIM_IT)
 
   /* Clear the IT pending Bit */
   TIMx->SR = (uint16_t)~TIM_IT;
+  ///  无需&=的原因是 SR(rc_w0) 只允许写0
 }
 
 /**
