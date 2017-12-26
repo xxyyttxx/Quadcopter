@@ -3,8 +3,9 @@
 
 #include "stm32f4xx.h"
 
+extern float kp, ki, halfT;
 extern float yaw, pitch, roll;   // 姿态角
-void Attitude(short gx, short gy, short gz, short ax, short ay, short az);
+void Attitude(float gx, float gy, float gz, float ax, float ay, float az);
 
 #endif
 
