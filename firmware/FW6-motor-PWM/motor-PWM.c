@@ -42,7 +42,7 @@ void motor_pwm_init (void) {
 		TIM_OCInitTypeDef r1 = {
 			.TIM_OCMode = TIM_OCMode_PWM1,
 			.TIM_OutputState = TIM_OutputState_Enable,
-			.TIM_OutputNState = TIM_OutputState_Enable // ?
+			.TIM_OutputNState = TIM_OutputNState_Enable // ?
 			// .TIM_Pulse = 0,
 			// .TIM_OCPolarity = TIM_OCPolarity_High,
 			// .TIM_OCNPolarity = TIM_OCPolarity_High

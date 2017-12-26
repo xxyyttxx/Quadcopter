@@ -42,10 +42,11 @@ void RCV_IC_init (void) {
 
         {
             TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-            TIM_TimeBaseStructure.TIM_Period = 60000;
-            TIM_TimeBaseStructure.TIM_Prescaler = 100;
+            TIM_TimeBaseStructure.TIM_Period = 0xFFFF; // 15.25HZ 只要高电平时间不超过33ms 就不会 
+            TIM_TimeBaseStructure.TIM_Prescaler = 100; // 1MHZ
             TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; 
             TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+            /// In upcounting mode, the counter counts from 0 to the auto-reload value (content of the TIMx_ARR register), then restarts from 0 and generates a counter overflow event.
             TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
         }
 
@@ -141,14 +142,19 @@ void TIM3_IRQHandler(void)
             ReadValue2 = TIM_GetCapture1(TIM3);
             
             /* Capture computation */
-            if (ReadValue2 >= ReadValue1)
-            {
-                u16Tim3IC1 = (ReadValue2 - ReadValue1); 
-            }
-            else if (ReadValue2 < ReadValue1)
-            {
-                u16Tim3IC1 = ((0xFFFF - ReadValue1) + ReadValue2); 
-            }
+            #if 0
+                    if (ReadValue2 >= ReadValue1)
+                    {
+                        u16Tim3IC1 = (ReadValue2 - ReadValue1); 
+                    }
+                    else if (ReadValue2 < ReadValue1)
+                    {
+                        u16Tim3IC1 = ((0x10000 - ReadValue1) + ReadValue2); 
+                    }
+            // or
+                    u16Tim3IC1=(ReadValue2-ReadValue1+0x10000)%0x10000; // C99/向零截断 %与a同号
+            #endif
+            u16Tim3IC1=ReadValue2-ReadValue1; // 无符号数截断
             ReadNO = 1;
             TIM_OC1PolarityConfig(TIM3, TIM_ICPolarity_Rising);
         }
@@ -173,14 +179,7 @@ void TIM3_IRQHandler(void)
             ReadValue2 = TIM_GetCapture2(TIM3); /***/
             
             /* Capture computation */
-            if (ReadValue2 >= ReadValue1)
-            {
-                u16Tim3IC2 = (ReadValue2 - ReadValue1); /***/
-            }
-            else if (ReadValue2 < ReadValue1)
-            {
-                u16Tim3IC2 = ((0xFFFF - ReadValue1) + ReadValue2); /***/
-            }
+            u16Tim3IC2=ReadValue2-ReadValue1;
             ReadNO = 1;
             TIM_OC2PolarityConfig(TIM3, TIM_ICPolarity_Rising);
         }
@@ -205,14 +204,7 @@ void TIM3_IRQHandler(void)
             ReadValue2 = TIM_GetCapture3(TIM3); /***/
             
             /* Capture computation */
-            if (ReadValue2 >= ReadValue1)
-            {
-                u16Tim3IC3 = (ReadValue2 - ReadValue1); /***/
-            }
-            else if (ReadValue2 < ReadValue1)
-            {
-                u16Tim3IC3 = ((0xFFFF - ReadValue1) + ReadValue2); /***/
-            }
+            u16Tim3IC3=ReadValue2-ReadValue1;
             ReadNO = 1;
             TIM_OC3PolarityConfig(TIM3, TIM_ICPolarity_Rising);
         }
@@ -237,14 +229,7 @@ void TIM3_IRQHandler(void)
             ReadValue2 = TIM_GetCapture4(TIM3); /***/
             
             /* Capture computation */
-            if (ReadValue2 >= ReadValue1)
-            {
-                u16Tim3IC4 = (ReadValue2 - ReadValue1); /***/
-            }
-            else if (ReadValue2 < ReadValue1)
-            {
-                u16Tim3IC4 = ((0xFFFF - ReadValue1) + ReadValue2); /***/
-            }
+            u16Tim3IC4=ReadValue2-ReadValue1;
             ReadNO = 1;
             TIM_OC4PolarityConfig(TIM3, TIM_ICPolarity_Rising);
         }

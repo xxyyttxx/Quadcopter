@@ -42,7 +42,7 @@ int main(void)
 	for (int c=0;;c++) {
 		delay(1000);
     printf("%d\r\n", c);
-		printf("\tu16Rcvr_ch1 = %d \r\n", u16Rcvr_ch1);
+    printf("\tu16Rcvr_ch1 = %d \r\n", u16Rcvr_ch1);
     printf("\tu16Rcvr_ch2 = %d \r\n", u16Rcvr_ch2);
     printf("\tu16Rcvr_ch3 = %d \r\n", u16Rcvr_ch3);
     printf("\tu16Rcvr_ch4 = %d \r\n", u16Rcvr_ch4);
