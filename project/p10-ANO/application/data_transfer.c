@@ -13,11 +13,11 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "Attitude.h"
 #include <stdio.h>
 
 #ifndef ndebug
 static float kp, ki, halfT;
-static float yaw, pitch, roll;   // 姿态角
 static int ax_cc, ay_cc, az_cc;
 static int gx_cc, gy_cc, gz_cc;
 #endif

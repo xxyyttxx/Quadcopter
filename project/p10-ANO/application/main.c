@@ -4,9 +4,10 @@
 #include "EVAL_define.h"
 #include "delay.h"
 #include "data_transfer.h"
-#include "gpio_mpu6050.h"
+#include "inv_mpu.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "Attitude.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,7 +38,7 @@ int main(void)
     delay(5000);
     RCV_IC_init();
 #endif
-    MPU_Init();
+    while (mpu_dmp_init());
 
     /* USART configuration */
     USART_Config();
@@ -47,7 +48,7 @@ int main(void)
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 
     for (;;) {
-        delay(1);
+        Attitude();
 
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
