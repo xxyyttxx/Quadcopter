@@ -7,7 +7,6 @@
 #include "gpio_mpu6050.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
-#include "Attitude.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,14 +46,8 @@ int main(void)
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 
-    for (int i=0;;) {
+    for (;;) {
         delay(1);
-
-        if (++i % 10 == 0){
-            acc_correct();
-            gyro_correct();
-            Attitude(gx_cc, gy_cc, gz_cc, ax_cc, ay_cc, az_cc);
-        }
 
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();

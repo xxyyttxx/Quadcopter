@@ -24,9 +24,10 @@
 #include <math.h>
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
-#include "mpu6050.h"
+#include "gpio_i2c.h"
+#include "gpio_mpu6050.h"
+#include "data_transfer.h"
 #include "delay.h"
-#include "usart.h"
 
 
 #define MPU6050							//定义我们使用的传感器为MPU6050
@@ -52,15 +53,15 @@
 
 #define i2c_write   MPU_Write_Len
 #define i2c_read    MPU_Read_Len
-#define delay_ms    delay_ms
+#define delay_ms    delay
 #define get_ms      mget_ms
 //static inline int reg_int_cb(struct int_param_s *int_param)
 //{
 //    return msp430_reg_int_cb(int_param->cb, int_param->pin, int_param->lp_exit,
 //        int_param->active_low);
 //}
-#define log_i 	printf	//打印信息
-#define log_e  	printf	//打印信息
+#define log_i(...)      ((void)0)// printf	//打印信息
+#define log_e(...)      ((void)0)// printf	//打印信息
 /* labs is already defined by TI's toolchain. */
 /* fabs is for doubles. fabsf is for floats. */
 #define fabs        fabsf

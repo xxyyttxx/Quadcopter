@@ -7,18 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/* 数据接口 */
-
-/* 加速度 角速度 循环均值滤波后的值 循环次数 为宏定义correct_num */
-/* 量程见init的量程设置以及相关函数 */
-int ax_cc, ay_cc, az_cc;
-int gx_cc, gy_cc, gz_cc;
-#define correct_num 10
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 /* MPU6050 寄存器地址 */
 
 #define MPU_SELF_TESTX_REG      0X0D    // 自检寄存器X
@@ -96,8 +84,6 @@ int gx_cc, gy_cc, gz_cc;
 
 /* MPU6050 控制接口，更底层是 IIC + GPIO */
 
-static uint8_t MPU_Write_Len(uint8_t addr, uint8_t reg, uint8_t len, uint8_t *buf); // IIC连续写
-static uint8_t MPU_Read_Len(uint8_t addr, uint8_t reg, uint8_t len, uint8_t *buf);  // IIC连续读
 static uint8_t MPU_Write_Byte(uint8_t reg, uint8_t data);  // IIC写一个字节
 static uint8_t MPU_Read_Byte(uint8_t reg);                 // IIC读一个字节
 
@@ -416,69 +402,3 @@ uint8_t MPU_Init(void)
     MPU_Set_Rate(250);                       /* 设置采样率为50Hz */
     return 0;
 }
-
-
-#define cn correct_num
-
-/** @brief 均值滤波读六轴数据.
-    把结果写到全局变量 AB_CC 上
-*/
-void acc_correct() {
-    
-#ifdef mean_fliter
-    int ax_c = 0, ay_c = 0, az_c = 0; // 忘记初始化了，下面也是，哭
-    for (int i=0; i<=cn; i++) {
-        short ax, ay, az;
-        MPU_Get_Accelerometer(&ax, &ay, &az);
-        ax_c += ax;
-        ay_c += ay;
-        az_c += az;
-    }
-#elif defined windows_fliter
-    static int ax_c, ay_c, az_c;
-    static short ax_w[cn], ay_w[cn], az_w[cn];
-    static int wid;
-    ax_c-=ax_w[wid];
-    ay_c-=ay_w[wid];
-    az_c-=az_w[wid];
-    MPU_Get_Accelerometer(ax_w+wid, ay_w+wid, az_w+wid);
-    ax_c+=ax_w[wid];
-    ay_c+=ay_w[wid];
-    az_c+=az_w[wid];
-    if (++wid == cn) wid = 0;
-#endif
-    ax_cc = ax_c/cn;
-    ay_cc = ay_c/cn;
-    az_cc = az_c/cn;
-}
-
-void gyro_correct(){
-
-#ifdef mean_fliter
-    int gx_c = 0, gy_c = 0, gz_c = 0;
-    for (int i=0; i<=cn; i++) {
-        short gx, gy, gz;
-        MPU_Get_Gyroscope(&gx, &gy, &gz);
-        gx_c += gx;
-        gy_c += gy;
-        gz_c += gz;
-    }
-#elif defined windows_fliter
-    static int gx_c, gy_c, gz_c;
-    static short gx_w[cn], gy_w[cn], gz_w[cn];
-    static int wid;
-    gx_c-=gx_w[wid];
-    gy_c-=gy_w[wid];
-    gz_c-=gz_w[wid];
-    MPU_Get_Gyroscope(gx_w+wid, gy_w+wid, gz_w+wid); /// !!!!
-    gx_c+=gx_w[wid];
-    gy_c+=gy_w[wid];
-    gz_c+=gz_w[wid];
-    if (++wid == cn) wid = 0;
-#endif
-    gx_cc = gx_c/cn;
-    gy_cc = gy_c/cn;
-    gz_cc = gz_c/cn;
-}
-
-#undef cn
