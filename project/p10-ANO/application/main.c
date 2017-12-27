@@ -14,7 +14,7 @@ void my2_ANO_DT_Data_Receive_Anl(void);
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
+int i;
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
 
@@ -47,7 +47,7 @@ int main(void)
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 
-    for (;;) {
+    for (i=0;;i++) {
         Attitude();
 
         ANO_DT_Data_Exchange();

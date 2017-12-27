@@ -150,7 +150,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RxBuffer,0x10</ItemText>
+          <ItemText>i,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
