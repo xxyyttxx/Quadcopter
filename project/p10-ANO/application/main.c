@@ -8,6 +8,7 @@
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
+#include "pid.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,7 +50,9 @@ int main(void)
 
     for (i=0;;i++) {
         Attitude();
-
+			
+				PID_calculate();
+			
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }
