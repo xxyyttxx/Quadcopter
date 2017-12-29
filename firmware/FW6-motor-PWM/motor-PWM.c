@@ -12,6 +12,8 @@
 #include "motor-PWM.h"
 
 /* Exported functions ---------------------------------------------------------*/
+extern uint32_t motor_pwm_range (int32_t x);
+
 /**
   * @brief  init TIM1_CH[1:4] & GPIOA[8:11](AF01).
   */
