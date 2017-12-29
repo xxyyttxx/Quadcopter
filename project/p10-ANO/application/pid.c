@@ -1,4 +1,5 @@
 #include "pid.h"
+#include "Attitude.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 
@@ -19,8 +20,6 @@ PID_Typedef roll_rate_PID;
 PID_Typedef yaw_rate_PID;
 extern gyro[3];
 #endif
-
-FLOAT_ANGLE EXP_ANGLE;         // 期望角度
 
 extern float yaw, pitch, roll; // 观测角度，解算出来的
 
@@ -53,10 +52,10 @@ void PID_init(void)
               int32_t dertT：     时间间隔，用于计算积分
     * @retval None
     */
-static void PID_postion_cal(PID_Typedef * PID, float target, float measure, int32_t dertT)
+static void PID_postion_cal(PID_Typedef * PID, float measure, int32_t dertT)
 {
     // 计算误差 = 期望值 - 观测值
-    PID->Error = target - measure;
+    PID->Error = PID->Desired - measure;
     // 计算积分
     PID->Integ += (double)PID->Error * dertT / 1000000.0;
     // 计算微分
@@ -90,14 +89,15 @@ void PID_calculate(void)
     int32_t dt = 0;
     
     // 从遥控接收机获取期望值
-    EXP_ANGLE.Roll  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
-    EXP_ANGLE.Pitch = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
-    EXP_ANGLE.Yaw   = 0; // range_trans(3000-u16Rcvr_ch4, max_angle_yaw); // f(u16Rcvr_ch4) -
+	
+    roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
+    pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
+    yaw_angle_PID.Desired   = 0; // range_trans(3000-u16Rcvr_ch4, max_angle_yaw); // f(u16Rcvr_ch4) -
                                      // !!!! // 假通道，没有需求
 
-    PID_postion_cal(&roll_angle_PID,  EXP_ANGLE.Roll,  roll,  dt); //要求平稳飞行 实际角度很小，0代表没有积分
-    PID_postion_cal(&pitch_angle_PID, EXP_ANGLE.Pitch, pitch, dt);
-    PID_postion_cal(&yaw_angle_PID,   EXP_ANGLE.Yaw,   yaw,   dt);
+    PID_postion_cal(&roll_angle_PID,  roll,  dt); //要求平稳飞行 实际角度很小，0代表没有积分
+    PID_postion_cal(&pitch_angle_PID, pitch, dt);
+    PID_postion_cal(&yaw_angle_PID,   yaw,   dt);
 
     // 获取输出值
     uint16_t Thr = u16Rcvr_ch3; /// 不用转换量程，因为通道捕获和电调输出都是1000～2000
@@ -116,13 +116,13 @@ void PID_calculate(void)
 // 外环角度PID
 void CtrlAttiAng(void)
 {
-    EXP_ANGLE.Roll  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
-    EXP_ANGLE.Pitch = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
-    EXP_ANGLE.Yaw   = 0;                                            // 假通道，没有需求
+    roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
+    pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
+    yaw_angle_PID.Desired   = 0;                                            // 假通道，没有需求
     
-    PID_postion_cal(&roll_angle_PID,  EXP_ANGLE.Roll,  roll,  dt);
-    PID_postion_cal(&pitch_angle_PID, EXP_ANGLE.Pitch, pitch, dt);
-    PID_postion_cal(&yaw_angle_PID,   EXP_ANGLE.Yaw,   yaw,   dt);
+    PID_postion_cal(&roll_angle_PID,  roll,  dt);
+    PID_postion_cal(&pitch_angle_PID, pitch, dt);
+    PID_postion_cal(&yaw_angle_PID,   yaw,   dt);
 }
 
 // 内环角速度PID
@@ -130,9 +130,12 @@ void CtrlAttiRate(void)
 {
     int32_t dt = 0;
     
-    PID_Postion_Cal(&roll_rate_PID,  roll_angle_PID.Output,  gyro[0], dt); // DMP_GYRO_SCALE
-    PID_Postion_Cal(&pitch_rate_PID, pitch_angle_PID.Output, gyro[1], dt);
-    PID_Postion_Cal(&yaw_rate_PID,   yaw_angle_PID.Output,   gyro[2], dt);
+	roll_rate_PID.Desired  = roll_angle_PID.Output ;
+	pitch_rate_PID.Desired = pitch_angle_PID.Output;
+    yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
+	PID_Postion_Cal(&roll_rate_PID,  gyro[0], dt); // DMP_GYRO_SCALE
+    PID_Postion_Cal(&pitch_rate_PID, gyro[1], dt);
+    PID_Postion_Cal(&yaw_rate_PID,   gyro[2], dt);
     
     // 获取输出值
     uint16_t Thr = u16Rcvr_ch3; /// 不用转换量程，因为通道捕获和电调输出都是1000～2000
