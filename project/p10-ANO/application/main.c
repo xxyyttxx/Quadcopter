@@ -50,9 +50,7 @@ int main(void)
 
     for (i=0;;i++) {
         Attitude();
-			
-				PID_calculate();
-			
+        PID_calculate();
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }
