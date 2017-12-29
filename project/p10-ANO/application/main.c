@@ -47,7 +47,8 @@ int main(void)
     /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
-
+	PID_init();
+	
     for (i=0;;i++) {
         Attitude();
         PID_calculate();
