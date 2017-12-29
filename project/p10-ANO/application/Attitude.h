@@ -4,5 +4,5 @@
 extern float yaw, pitch, roll;   // 姿态角
 void Attitude(void);
 
-#endif
+#endif /* _ATTITUDE_H */
 
