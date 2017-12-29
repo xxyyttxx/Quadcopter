@@ -27,7 +27,7 @@ void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length);
 /////////////////////////////////////////////////////////////////////////////////////
 //数据拆分宏定义，在发送大于1字节的数据类型时，比如int16、float等，需要把数据拆分成单独字节进行发送
 // 小端 要求?
-#define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)      ) )
+#define BYTE0(dwTemp)       ( *( (char *)(&dwTemp)    ) )
 #define BYTE1(dwTemp)       ( *( (char *)(&dwTemp) + 1) )
 #define BYTE2(dwTemp)       ( *( (char *)(&dwTemp) + 2) )
 #define BYTE3(dwTemp)       ( *( (char *)(&dwTemp) + 3) )
@@ -100,8 +100,10 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6);
         // ANO_DT_Send_RCData(Rc_Pwm_In[0],Rc_Pwm_In[1],Rc_Pwm_In[2],Rc_Pwm_In[3],Rc_Pwm_In[4],Rc_Pwm_In[5],Rc_Pwm_In[6],Rc_Pwm_In[7],0,0);
         ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, 5,6,7,8,9,10);
+#ifdef debug_
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
         Usart2_Send("\r\nhere?,why no?\r\n", sizeof "\r\nhere?,why no?\r\n");
+#endif
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_motopwm)
@@ -138,9 +140,10 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
         //             float error_rol, float error_pit, float error_yaw,
         //             float react_rol, float react_pit, float react_yaw);
-        ANO_DT_Send_F1(pitch_angle_PID.Desired, roll_angle_PID.Desired, yaw_angle_PID.Desired,
-                       pitch_angle_PID.Error, roll_angle_PID.Error, yaw_angle_PID.Error,
-                       pitch_angle_PID.Output, roll_angle_PID.Output, yaw_angle_PID.Output
+
+        ANO_DT_Send_F1(roll_angle_PID.Desired, pitch_angle_PID.Desired, yaw_angle_PID.Desired,
+                       roll_angle_PID.Error,   pitch_angle_PID.Error,   yaw_angle_PID.Error,
+                       roll_angle_PID.Output,  pitch_angle_PID.Output,  yaw_angle_PID.Output
                        );
     }
 /////////////////////////////////////////////////////////////////////////////////////
@@ -275,10 +278,12 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         yaw_angle_PID.I   = 0.001f * ( (*(data_buf+18)<<8)|*(data_buf+19) );
         yaw_angle_PID.D   = 0.001f * ( (*(data_buf+20)<<8)|*(data_buf+21) );
 
+#ifdef debug_
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
         Usart2_Send("\r\nhere2\r\n", sizeof "\r\nhere2\r\n");
         static char s[20]; // Usart_Send 是排队并延迟到中断发送，不阻塞。。
         Usart2_Send((uint8_t *)s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
+#endif
     }
     if(*(data_buf+2)==0X11)                             //PID2
     {
@@ -575,7 +580,7 @@ void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
                     float error_rol, float error_pit, float error_yaw,
                     float react_rol, float react_pit, float react_yaw)
 {
-    static u8 data_to_send[10+4*9];
+    static u8 data_to_send[200];
     u8 _cnt=0;
     data_to_send[_cnt++]=0xAA;
     data_to_send[_cnt++]=0xAA;
