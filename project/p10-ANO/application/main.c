@@ -4,17 +4,19 @@
 #include "EVAL_define.h"
 #include "delay.h"
 #include "data_transfer.h"
-#include "gpio_mpu6050.h"
+#include "inv_mpu.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
+#include "pid.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define ndebug
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
+int i;
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
 
@@ -28,7 +30,7 @@ static void USART_Config(void);
 int main(void)
 {
     delayinit();
-#ifdef ndebug
+#ifndef ndebug
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;
     delay(2000);
@@ -37,8 +39,17 @@ int main(void)
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
     delay(5000);
     RCV_IC_init();
+#else
+    delay(4000);
+    motor_pwm_init();
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
+    delay(4000);
+    motor_pwm_init();
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
+    delay(4000);
+    RCV_IC_init();
 #endif
-    MPU_Init();
+    while (mpu_dmp_init());
 
     /* USART configuration */
     USART_Config();
@@ -46,16 +57,11 @@ int main(void)
     /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
-
-    for (int i=0;;) {
-        delay(1);
-
-        if (++i % 10 == 0){
-            acc_correct();
-            gyro_correct();
-            Attitude(gx_cc, gy_cc, gz_cc, ax_cc, ay_cc, az_cc);
-        }
-
+	PID_init();
+	
+    for (i=0;;i++) {
+        Attitude();
+        PID_calculate();
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }

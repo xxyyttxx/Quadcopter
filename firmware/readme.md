@@ -20,9 +20,9 @@
 	- 把原本官方工程的systick软延时提取过来了
 	- 依赖systick
 	- 实现上是 1 systick/ms，所以 delay 的参数就是要延时的毫秒数。
-	- 因为递减计时的变量 uwTimingDelay 设定成全局变量，所以也可用来做外部计时。
+	- 同时维护一个全局变量 msTimerCounter ，可用来做外部计时。
 ```	
-extern __IO uint32_t uwTimingDelay;
+extern __IO uint32_t msTimerCounter;
 void delayinit (void);
 void delay (uint32_t ticks);
 ```

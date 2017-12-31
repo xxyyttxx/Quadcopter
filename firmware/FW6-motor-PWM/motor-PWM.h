@@ -7,8 +7,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __motor_PWM
-#define __motor_PWM
+#ifndef __motor_PWM_H
+#define __motor_PWM_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -52,4 +52,4 @@ void motor_pwm_init (void);
 #endif
 
 
-#endif /* __motor_PWM */
+#endif /* __motor_PWM_H */

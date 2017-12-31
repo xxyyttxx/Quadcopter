@@ -1,5 +1,5 @@
-#ifndef __GPIO_IIC
-#define __GPIO_IIC
+#ifndef __GPIO_IIC_H
+#define __GPIO_IIC_H
 
 #include <stdint.h>
 
@@ -38,4 +38,4 @@ void IIC_Send_Byte(uint8_t txd);
 uint8_t IIC_Read_Byte(uint8_t ack);
 
 
-#endif /* __GPIO_IIC */
+#endif /* __GPIO_IIC_H */

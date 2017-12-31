@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\FW6-motor-PWM;..\..\firmware\FW7-PWM-RCV;..\..\firmware\FW8-gpio-iic-mpu6050-rawdata</IncludePath>
+              <IncludePath>.\application;..\..\stdperiph\CMSIS\Device;..\..\stdperiph\CMSIS\Include;..\..\stdperiph\Driver\inc;..\..\ucosii;..\..\firmware\delay;..\..\firmware\FW6-motor-PWM;..\..\firmware\FW7-PWM-RCV;..\..\firmware\FW8-gpio-iic-mpu6050-rawdata;.\application\eMPL</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1111,6 +1111,11 @@
               <FileType>1</FileType>
               <FilePath>.\application\Attitude.c</FilePath>
             </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\pid.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1140,6 +1145,21 @@
               <FileName>gpio_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\firmware\FW8-gpio-iic-mpu6050-rawdata\gpio_i2c.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MPU</GroupName>
+          <Files>
+            <File>
+              <FileName>inv_mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\eMPL\inv_mpu.c</FilePath>
+            </File>
+            <File>
+              <FileName>inv_mpu_dmp_motion_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\eMPL\inv_mpu_dmp_motion_driver.c</FilePath>
             </File>
           </Files>
         </Group>

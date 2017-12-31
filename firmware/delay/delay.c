@@ -8,11 +8,12 @@
 
 #include "delay.h"
 
-__IO uint32_t uwTimingDelay;
+static __IO uint32_t uwTimingDelay;
+volatile uint32_t msTimerCounter;
 /* 
 __IO的说明
 定义在 "core_cm4.h"
-__IO __I __O -> volatile -> 防止多任务使用的资源被优化
+__IO __I __O -> volatile -> 防止多任务(OS/IRQ)使用的资源被优化
 不是指针的参数以及返回值就不要用这个修饰了
 */
 
@@ -32,6 +33,7 @@ static void TimingDelay_Decrement (void)
   { 
     uwTimingDelay--;
   }
+  msTimerCounter++;
 }
 
 /// @brief  This function handles SysTick Handler.
