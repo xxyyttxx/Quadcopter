@@ -1,5 +1,6 @@
 #include "delay.h"
 #include "pid.h"
+#include "inv_mpu.h"
 #include "Attitude.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
@@ -8,20 +9,18 @@
 #define max_angle_pr 20
 #define max_angle_yaw 180
 #define I_limit_init 20
+#define DMP_GYRO_SCALE 16.4f    // 2000deg/s , 31276/2000=16.4f
+
 
 PID_Typedef pitch_angle_PID;    // pitch角度PID
 PID_Typedef roll_angle_PID;
 PID_Typedef yaw_angle_PID;
 
-#if 0 //供扩展串级PID使用
-#define DMP_GYRO_SCALE 16.4f    // 2000deg/s , 31276/2000=16.4f
-
 PID_Typedef pitch_rate_PID;
 PID_Typedef roll_rate_PID;
 PID_Typedef yaw_rate_PID;
-extern gyro[3];
-#endif
 
+extern short gyro[3];
 extern float yaw, pitch, roll; // 观测角度，解算出来的
 
 /**
@@ -46,6 +45,21 @@ void PID_init(void)
     yaw_angle_PID.I = 0;
     yaw_angle_PID.D = 0;
     yaw_angle_PID.iLimit = I_limit_init;
+    
+    pitch_rate_PID.P = 1;
+    pitch_rate_PID.I = 0;
+    pitch_rate_PID.D = 0;
+    pitch_rate_PID.iLimit = I_limit_init;
+
+    roll_rate_PID.P = 0;
+    roll_rate_PID.I = 0;
+    roll_rate_PID.D = 0;
+    roll_rate_PID.iLimit = I_limit_init;
+
+    yaw_rate_PID.P = 0;
+    yaw_rate_PID.I = 0;
+    yaw_rate_PID.D = 0;
+    yaw_rate_PID.iLimit = I_limit_init;
 }
 
 /**
@@ -91,12 +105,13 @@ static inline uint16_t range_pwm(float motor_pwm, uint16_t thr)
     return thr;
 }
 
+#if 0 //供单环PID使用
 void PID_calculate(void)
 {
     static uint32_t told = 0;
     
     // 从遥控接收机获取期望值
-	
+    
     roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
     pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
     yaw_angle_PID.Desired   = 0; // range_trans(3000-u16Rcvr_ch4, max_angle_yaw); // f(u16Rcvr_ch4) -
@@ -126,31 +141,38 @@ void PID_calculate(void)
         motor_pwm_4 = motor_pwm_min;
     }
 }
+#endif
 
-#if 0
 // 外环角度PID
 void CtrlAttiAng(void)
 {
+    static uint32_t told = 0;
+    
     roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
     pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
     yaw_angle_PID.Desired   = 0;                                            // 假通道，没有需求
     
-    PID_postion_cal(&roll_angle_PID,  roll,  dt);
-    PID_postion_cal(&pitch_angle_PID, pitch, dt);
-    PID_postion_cal(&yaw_angle_PID,   yaw,   dt);
+    uint32_t tnow = msTimerCounter;
+    PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
+    PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
+    PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
+    told = tnow;
 }
 
 // 内环角速度PID
 void CtrlAttiRate(void)
 {
-    int32_t dt = 0;
+    static uint32_t told = 0;
     
-	roll_rate_PID.Desired  = roll_angle_PID.Output ;
-	pitch_rate_PID.Desired = pitch_angle_PID.Output;
+    roll_rate_PID.Desired  = roll_angle_PID.Output ;
+    pitch_rate_PID.Desired = pitch_angle_PID.Output;
     yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
-	PID_Postion_Cal(&roll_rate_PID,  gyro[0], dt); // DMP_GYRO_SCALE
-    PID_Postion_Cal(&pitch_rate_PID, gyro[1], dt);
-    PID_Postion_Cal(&yaw_rate_PID,   gyro[2], dt);
+    
+    uint32_t tnow = msTimerCounter;
+    PID_postion_cal(&roll_rate_PID,  gyro[0], tnow-told); // DMP_GYRO_SCALE
+    PID_postion_cal(&pitch_rate_PID, gyro[1], tnow-told);
+    PID_postion_cal(&yaw_rate_PID,   gyro[2], tnow-told);
+    told = tnow;
     
     // 获取输出值
     uint16_t Thr = u16Rcvr_ch3; /// 不用转换量程，因为通道捕获和电调输出都是1000～2000
@@ -159,9 +181,16 @@ void CtrlAttiRate(void)
     float Yaw    = yaw_rate_PID.Output;
 
     // 输出值融合到四个电机
-    motor_pwm_1 = range_pwm( - Pitch - Roll + Yaw, Thr);
-    motor_pwm_2 = range_pwm( + Pitch - Roll - Yaw, Thr);
-    motor_pwm_3 = range_pwm( + Pitch + Roll + Yaw, Thr);
-    motor_pwm_4 = range_pwm( - Pitch + Roll - Yaw, Thr);
+    if (Thr > 1100) { // 是否锁定状态
+        motor_pwm_1 = range_pwm( - Pitch - Roll - Yaw, Thr);
+        motor_pwm_2 = range_pwm( + Pitch - Roll + Yaw, Thr);
+        motor_pwm_3 = range_pwm( + Pitch + Roll - Yaw, Thr);
+        motor_pwm_4 = range_pwm( - Pitch + Roll + Yaw, Thr);
+    } else {
+        motor_pwm_1 = motor_pwm_min;
+        motor_pwm_2 = motor_pwm_min;
+        motor_pwm_3 = motor_pwm_min;
+        motor_pwm_4 = motor_pwm_min;
+    }
 }
-#endif
+
