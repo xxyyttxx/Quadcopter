@@ -115,10 +115,10 @@ void PID_calculate(void)
 
     // 输出值融合到四个电机
     if (Thr > 1100) { // 是否锁定状态
-        motor_pwm_1 = range_pwm( - Pitch - Roll + Yaw, Thr);
-        motor_pwm_2 = range_pwm( + Pitch - Roll - Yaw, Thr);
-        motor_pwm_3 = range_pwm( + Pitch + Roll + Yaw, Thr);
-        motor_pwm_4 = range_pwm( - Pitch + Roll - Yaw, Thr);
+        motor_pwm_1 = range_pwm( - Pitch - Roll - Yaw, Thr);
+        motor_pwm_2 = range_pwm( + Pitch - Roll + Yaw, Thr);
+        motor_pwm_3 = range_pwm( + Pitch + Roll - Yaw, Thr);
+        motor_pwm_4 = range_pwm( - Pitch + Roll + Yaw, Thr);
     } else {
         motor_pwm_1 = motor_pwm_min;
         motor_pwm_2 = motor_pwm_min;
