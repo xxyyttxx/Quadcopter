@@ -281,13 +281,13 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
                 //Param_SavePID(); 
         roll_angle_PID.P  = 0.001f * ( (*(data_buf+4)<<8) |*(data_buf+5)  );
         roll_angle_PID.I  = 0.001f * ( (*(data_buf+6)<<8) |*(data_buf+7)  );
-        roll_angle_PID.D  = 0.001f * ( (*(data_buf+8)<<8) |*(data_buf+9)  );
+        roll_angle_PID.D  =  0.01f * ( (*(data_buf+8)<<8) |*(data_buf+9)  );
         pitch_angle_PID.P = 0.001f * ( (*(data_buf+10)<<8)|*(data_buf+11) );
         pitch_angle_PID.I = 0.001f * ( (*(data_buf+12)<<8)|*(data_buf+13) );
-        pitch_angle_PID.D = 0.001f * ( (*(data_buf+14)<<8)|*(data_buf+15) );
+        pitch_angle_PID.D =  0.01f * ( (*(data_buf+14)<<8)|*(data_buf+15) );
         yaw_angle_PID.P   = 0.001f * ( (*(data_buf+16)<<8)|*(data_buf+17) );
         yaw_angle_PID.I   = 0.001f * ( (*(data_buf+18)<<8)|*(data_buf+19) );
-        yaw_angle_PID.D   = 0.001f * ( (*(data_buf+20)<<8)|*(data_buf+21) );
+        yaw_angle_PID.D   =  0.01f * ( (*(data_buf+20)<<8)|*(data_buf+21) );
 
 #ifdef debug_
         void Usart2_Send(uint8_t *data_to_send, uint32_t length);
@@ -538,7 +538,7 @@ void ANO_DT_Send_MotoPWM(u16 m_1,u16 m_2,u16 m_3,u16 m_4,u16 m_5,u16 m_6,u16 m_7
 void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float p2_i,float p2_d,float p3_p,float p3_i,float p3_d)
 {
     u8 _cnt=0;
-    vs16 _temp;
+    vu16 _temp;
 
     data_to_send[_cnt++]=0xAA;
     data_to_send[_cnt++]=0xAA;
@@ -552,7 +552,7 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
     _temp = p1_i  * 1000;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
-    _temp = p1_d  * 1000;
+    _temp = p1_d  * 100;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
     _temp = p2_p  * 1000;
@@ -561,7 +561,7 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
     _temp = p2_i  * 1000;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
-    _temp = p2_d * 1000;
+    _temp = p2_d * 100;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
     _temp = p3_p  * 1000;
@@ -570,7 +570,7 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
     _temp = p3_i  * 1000;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
-    _temp = p3_d * 1000;
+    _temp = p3_d * 100;
     data_to_send[_cnt++]=BYTE1(_temp);
     data_to_send[_cnt++]=BYTE0(_temp);
 
