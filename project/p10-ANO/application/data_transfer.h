@@ -19,6 +19,7 @@ typedef struct
 		u8 send_motopwm;
 		u8 send_power;
 		u8 send_F1;
+		u8 send_F2;
 
 }dt_flag_t;
 
@@ -37,6 +38,7 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
                     float error_rol, float error_pit, float error_yaw,
                     float react_rol, float react_pit, float react_yaw);
+void ANO_DT_Send_F2(float Integ_Output_rol, float Integ_Output_pit, float Integ_Output_yaw);
 
 
 #endif /* _DATA_TRANSFER_H */

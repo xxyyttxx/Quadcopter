@@ -41,12 +41,13 @@ u8 data_to_send[50];    //发送数据缓存 //// bug 没有上锁。。。
 void ANO_DT_Data_Exchange(void)
 {
     static u8 cnt = 0;
-    static u8 senser_cnt    = 8;
-    static u8 status_cnt    = 16;
-    static u8 rcdata_cnt    = 32;
-    static u8 motopwm_cnt   = 32;
-    static u8 power_cnt     = 64;
-    static u8 F1_cnt        = 16;
+    const u8 senser_cnt    = 8;
+    const u8 status_cnt    = 16;
+    const u8 rcdata_cnt    = 32;
+    const u8 motopwm_cnt   = 32;
+    const u8 power_cnt     = 64;
+    const u8 F1_cnt        = 8;
+    const u8 F2_cnt        = 8;
 
     if((cnt % senser_cnt) == (senser_cnt-1))
         f.send_senser = 1;
@@ -66,6 +67,8 @@ void ANO_DT_Data_Exchange(void)
     if((cnt % F1_cnt) == (F1_cnt-1))
         f.send_F1 = 1;
 
+    if((cnt % F2_cnt) == (F2_cnt-1))
+        f.send_F2 = 1;
 
     cnt++;
 /////////////////////////////////////////////////////////////////////////////////////
@@ -145,6 +148,14 @@ void ANO_DT_Data_Exchange(void)
                        roll_angle_PID.Error,   pitch_angle_PID.Error,   yaw_angle_PID.Error,
                        roll_angle_PID.Output,  pitch_angle_PID.Output,  yaw_angle_PID.Output
                        );
+    }
+/////////////////////////////////////////////////////////////////////////////////////
+    else if (f.send_F2) {
+        f.send_F2 = 0;
+        // void ANO_DT_Send_F2(float Integ_Output_rol, float Integ_Output_pit, float Integ_Output_yaw);
+        ANO_DT_Send_F2(roll_angle_PID.I * roll_angle_PID.Integ,
+                       pitch_angle_PID.I * pitch_angle_PID.Integ,
+                       yaw_angle_PID.I * yaw_angle_PID.Integ);
     }
 /////////////////////////////////////////////////////////////////////////////////////
 }
@@ -637,5 +648,34 @@ void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
 }
 
 
+void ANO_DT_Send_F2(float Integ_Output_rol, float Integ_Output_pit, float Integ_Output_yaw)
+{
+    static u8 data_to_send[200];
+    u8 _cnt=0;
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0xAA;
+    data_to_send[_cnt++]=0xF2;
+    data_to_send[_cnt++]=0;
 
+    data_to_send[_cnt++]=BYTE3(Integ_Output_rol);
+    data_to_send[_cnt++]=BYTE2(Integ_Output_rol);
+    data_to_send[_cnt++]=BYTE1(Integ_Output_rol);
+    data_to_send[_cnt++]=BYTE0(Integ_Output_rol);
+    data_to_send[_cnt++]=BYTE3(Integ_Output_pit);
+    data_to_send[_cnt++]=BYTE2(Integ_Output_pit);
+    data_to_send[_cnt++]=BYTE1(Integ_Output_pit);
+    data_to_send[_cnt++]=BYTE0(Integ_Output_pit);
+    data_to_send[_cnt++]=BYTE3(Integ_Output_yaw);
+    data_to_send[_cnt++]=BYTE2(Integ_Output_yaw);
+    data_to_send[_cnt++]=BYTE1(Integ_Output_yaw);
+    data_to_send[_cnt++]=BYTE0(Integ_Output_yaw);
 
+    data_to_send[3] = _cnt-4;
+
+    u8 sum = 0;
+    for(u8 i=0;i<_cnt;i++)
+        sum += data_to_send[i];
+    data_to_send[_cnt++]=sum;
+
+    ANO_DT_Send_Data(data_to_send, _cnt);
+}
