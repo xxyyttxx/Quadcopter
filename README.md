@@ -1,37 +1,11 @@
-author: tjua @ ES-SS-UESTC © 2017
+author: [tjua](https://github.com/xxyyttxx), [daisenryaku](https://github.com/daisenryaku), [806216616](https://github.com/806216616) @ ES-SS-UESTC © 2017
 
 ## 项目介绍
 一个基于stm32f411re以及ST标准库的四轴飞行器实现。
 
 ## 开发环境搭建
 
-1. 开发环境
-	- windows XP + keil5.14a：[Keil MDK-ARM](http://www.keil.com/mdk5)
-	- STM32F4 芯片支持包：[Keil.STM32F4xx_DFP.2.11.0.pack](http://www.keil.com/dd2/pack/)
-
-2. 开发板介绍
-	- NECLEO-F411RE：[介绍](http://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-nucleo/nucleo-f411re.html)
-	- STM32F411RE：[介绍](http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f4-series/stm32f411/stm32f411re.html)
-
-3. 板载调试器 st-link 驱动安装
-	- [ST-link/v2](http://www.st.com/en/development-tools/debug-hardware-for-stm32-mcus.html)
-	- [STSW-LINK009](http://www.st.com/content/st_com/en/products/development-tools/hardware-development-tools/development-tool-hardware-for-mcus/debug-hardware-for-mcus/debug-hardware-for-stm32-mcus/st-link-v2.html)
-	- Windows 驱动：[en.stsw-link009.zip](http://www.st.com/content/st_com/en/products/embedded-software/development-tool-software/stsw-link009.html)
-
-4. ST标准外设库下载
-	- [STSW-STM32065](http://www.st.com/en/embedded-software/stm32-standard-peripheral-libraries.html)
-	- [en.stm32f4_dsp_stdperiph_lib.zip](http://www.st.com/content/st_com/en/products/embedded-software/mcus-embedded-software/stm32-embedded-software/stm32-standard-peripheral-libraries/stsw-stm32065.html)
-	- [License](http://www.st.com/software_license_agreement_liberty_v2)：自行查看源文件首部。
-	- 配置见 目录树结构与工程管理。
-
-5. 搭建实时系统
-	- µc/os 官方移植的很不靠谱，最后用了航哥 (@daisenryaku) 那里拿的（感觉各种代码混合。很乱，但是能用）
-	- [License](#)：自行查看源文件首部。
-
-6. 工程约定：
-	1. 不使用 Keil5 包管理
-	2. 不使用 keil-target 管理 (不如文件管理方便)
-	3. 使用ST标准外设库而非 [Cube 库](http://www.st.com/en/embedded-software/stm32cube-embedded-software.html)
+见[wiki介绍](https://github.com/UESTC404/Quadcopter/wiki/1.1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA)。
 
 ## 目录树结构与工程管理
 	- 工程管理用了类似原子哥的形式，但改进了：多个工程 (project/application) 使用同一份驱动库代码 (ucosii/stdperiph/firmware)
