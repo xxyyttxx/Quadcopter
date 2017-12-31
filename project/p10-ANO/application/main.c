@@ -30,7 +30,7 @@ static void USART_Config(void);
 int main(void)
 {
     delayinit();
-#ifdef ndebug
+#ifndef ndebug
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;
     delay(2000);
@@ -38,6 +38,15 @@ int main(void)
     delay(1100);
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
     delay(5000);
+    RCV_IC_init();
+#else
+    delay(4000);
+    motor_pwm_init();
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
+    delay(4000);
+    motor_pwm_init();
+    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
+    delay(4000);
     RCV_IC_init();
 #endif
     while (mpu_dmp_init());
