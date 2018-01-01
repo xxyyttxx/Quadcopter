@@ -137,9 +137,9 @@ void CtrlAttiRate(void)
     yaw_rate_PID.Desired   = range_trans(u16Rcvr_ch4, 5);
     
     uint32_t tnow = msTimerCounter;
-    PID_postion_cal(&roll_rate_PID,  gyro[0], tnow-told); // DMP_GYRO_SCALE
-    PID_postion_cal(&pitch_rate_PID, gyro[1], tnow-told);
-    PID_postion_cal(&yaw_rate_PID,   gyro[2], tnow-told);
+    PID_postion_cal(&roll_rate_PID,  gyro[0] / DMP_GYRO_SCALE, tnow-told); // DMP_GYRO_SCALE
+    PID_postion_cal(&pitch_rate_PID, gyro[1] / DMP_GYRO_SCALE, tnow-told);
+    PID_postion_cal(&yaw_rate_PID,   gyro[2] / DMP_GYRO_SCALE, tnow-told);
     told = tnow;
 }
 
