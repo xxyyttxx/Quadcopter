@@ -13,7 +13,7 @@ void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define ndebug
+// #define init_governor // 不用初始化电调
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 int i;
@@ -30,7 +30,7 @@ static void USART_Config(void);
 int main(void)
 {
     delayinit();
-#ifndef ndebug
+#ifdef init_governor // 初始化电调。要求stlink提前供电，电调和F411同时上电
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_max;
     delay(2000);
