@@ -105,6 +105,11 @@ static inline uint16_t range_pwm(float motor_pwm, uint16_t thr)
     return thr;
 }
 
+static inline uint16_t range_thr(uint16_t thr)
+{
+    return 600 + 0.6 * thr;
+}
+
 #if 0 //供单环PID使用
 void PID_calculate(void)
 {
@@ -182,10 +187,10 @@ void CtrlAttiRate(void)
 
     // 输出值融合到四个电机
     if (Thr > 1100) { // 是否锁定状态
-        motor_pwm_1 = range_pwm( - Pitch - Roll - Yaw, Thr);
-        motor_pwm_2 = range_pwm( + Pitch - Roll + Yaw, Thr);
-        motor_pwm_3 = range_pwm( + Pitch + Roll - Yaw, Thr);
-        motor_pwm_4 = range_pwm( - Pitch + Roll + Yaw, Thr);
+        motor_pwm_1 = range_pwm( - Pitch - Roll - Yaw, range_thr(Thr));
+        motor_pwm_2 = range_pwm( + Pitch - Roll + Yaw, range_thr(Thr));
+        motor_pwm_3 = range_pwm( + Pitch + Roll - Yaw, range_thr(Thr));
+        motor_pwm_4 = range_pwm( - Pitch + Roll + Yaw, range_thr(Thr));
     } else {
         motor_pwm_1 = motor_pwm_min;
         motor_pwm_2 = motor_pwm_min;
