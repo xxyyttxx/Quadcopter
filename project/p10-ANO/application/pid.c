@@ -128,9 +128,13 @@ void CtrlAttiRate(void)
 {
     static uint32_t told = 0;
     
-    roll_rate_PID.Desired  = roll_angle_PID.Output ;
-    pitch_rate_PID.Desired = pitch_angle_PID.Output;
-    yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
+    //roll_rate_PID.Desired  = roll_angle_PID.Output ;
+    //pitch_rate_PID.Desired = pitch_angle_PID.Output;
+    //yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
+
+    roll_rate_PID.Desired  = range_trans(u16Rcvr_ch1, 5);
+    pitch_rate_PID.Desired = range_trans(u16Rcvr_ch2, 5);
+    yaw_rate_PID.Desired   = range_trans(u16Rcvr_ch4, 5);
     
     uint32_t tnow = msTimerCounter;
     PID_postion_cal(&roll_rate_PID,  gyro[0], tnow-told); // DMP_GYRO_SCALE
