@@ -150,8 +150,8 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Fx_pid_ans(u8 Fx, float rcver_rol, float rcver_pit, float rcver_yaw,
         //             float error_rol, float error_pit, float error_yaw,
         //             float react_rol, float react_pit, float react_yaw);
-
-        ANO_DT_Send_Fx_pid_ans(0xF1,
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF1,
                        roll_angle_PID.Desired, pitch_angle_PID.Desired, yaw_angle_PID.Desired,
                        roll_angle_PID.Error,   pitch_angle_PID.Error,   yaw_angle_PID.Error,
                        roll_angle_PID.Output,  pitch_angle_PID.Output,  yaw_angle_PID.Output
@@ -163,7 +163,8 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Fx_pid_part(u8 Fx, float P_Output_rol, float P_Output_pit, float P_Output_yaw,
         //                      float I_Output_rol, float I_Output_pit, float I_Output_yaw,
         //                      float D_Output_rol, float D_Output_rol, float D_Output_rol);
-        ANO_DT_Send_Fx_pid_part( 0xF2,
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF2,
                         // PID->P * PID->Error
                         roll_angle_PID.D * roll_angle_PID.Error,
                         pitch_angle_PID.D * pitch_angle_PID.Error,
@@ -184,8 +185,8 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Fx_pid_ans(u8 Fx, float rcver_rol, float rcver_pit, float rcver_yaw,
         //             float error_rol, float error_pit, float error_yaw,
         //             float react_rol, float react_pit, float react_yaw);
-
-        ANO_DT_Send_Fx_pid_ans(0xF3,
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF3,
                        roll_rate_PID.Desired, pitch_rate_PID.Desired, yaw_rate_PID.Desired,
                        roll_rate_PID.Error,   pitch_rate_PID.Error,   yaw_rate_PID.Error,
                        roll_rate_PID.Output,  pitch_rate_PID.Output,  yaw_rate_PID.Output
@@ -197,7 +198,8 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_Fx_pid_part(u8 Fx, float P_Output_rol, float P_Output_pit, float P_Output_yaw,
         //                      float I_Output_rol, float I_Output_pit, float I_Output_yaw,
         //                      float D_Output_rol, float D_Output_rol, float D_Output_rol);
-        ANO_DT_Send_Fx_pid_part( 0xF4,
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF4,
                         // PID->P * PID->Error
                         roll_rate_PID.D * roll_rate_PID.Error,
                         pitch_rate_PID.D * pitch_rate_PID.Error,
@@ -645,12 +647,11 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 /******************* (C) COPYRIGHT 2014 ANO TECH *****END OF FILE************/
 
 
-void ANO_DT_Send_Fx_9float(u8 Fx,
+void ANO_DT_Send_Fx_9float(u8 data_to_send[], u8 Fx,
                     float _f1, float _f2, float _f3,
                     float _f4, float _f5, float _f6,
                     float _f7, float _f8, float _f9)
 {
-    static u8 data_to_send[200];
     u8 _cnt=0;
     data_to_send[_cnt++]=0xAA;
     data_to_send[_cnt++]=0xAA;
@@ -704,26 +705,4 @@ void ANO_DT_Send_Fx_9float(u8 Fx,
     data_to_send[_cnt++]=sum;
 
     ANO_DT_Send_Data(data_to_send, _cnt);
-}
-
-void ANO_DT_Send_Fx_pid_ans(u8 Fx,
-                    float rcver_rol, float rcver_pit, float rcver_yaw,
-                    float error_rol, float error_pit, float error_yaw,
-                    float react_rol, float react_pit, float react_yaw)
-{
-    ANO_DT_Send_Fx_9float(Fx,
-                    rcver_rol, rcver_pit, rcver_yaw,
-                    error_rol, error_pit, error_yaw,
-                    react_rol, react_pit, react_yaw);
-}
-
-void ANO_DT_Send_Fx_pid_part(u8 Fx,
-                    float P_Output_rol, float P_Output_pit, float P_Output_yaw,
-                    float I_Output_rol, float I_Output_pit, float I_Output_yaw,
-                    float D_Output_rol, float D_Output_pit, float D_Output_yaw)
-{
-    ANO_DT_Send_Fx_9float(Fx,
-                        P_Output_rol, P_Output_pit, P_Output_yaw,
-                        I_Output_rol, I_Output_pit, I_Output_yaw,
-                        D_Output_rol, D_Output_pit, D_Output_yaw);
 }
