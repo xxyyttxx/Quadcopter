@@ -76,11 +76,9 @@ static void PID_postion_cal(PID_Typedef * PID, float measure, uint32_t dertT)
     PID->Error = PID->Desired - measure;
     // 计算积分
     PID->Integ += (double)PID->Error * dertT / 1000.0;
-// #if 0 // 暂时不给积分限制
+    // 积分限制
     if (PID->Integ > PID->iLimit) PID->Integ = PID->iLimit;
-    if (PID->Integ < -PID->iLimit) PID->Integ = -PID->iLimit; // 直接改累积合适吗?
-    // 是否需要分段
-// #endif
+    if (PID->Integ < -PID->iLimit) PID->Integ = -PID->iLimit;
     // 计算微分
     PID->Deriv = PID->Error - PID->PreError;
     // 计算输出
