@@ -20,7 +20,6 @@ PID_Typedef pitch_rate_PID;
 PID_Typedef roll_rate_PID;
 PID_Typedef yaw_rate_PID;
 
-extern short gyro[3];
 extern float yaw, pitch, roll; // 观测角度，解算出来的
 
 /**
@@ -31,17 +30,17 @@ extern float yaw, pitch, roll; // 观测角度，解算出来的
 
 void PID_init(void)
 {
-    pitch_angle_PID.P = 2;
+    pitch_angle_PID.P = 0;
     pitch_angle_PID.I = 0;
-    pitch_angle_PID.D = 65.535f;
+    pitch_angle_PID.D = 0;
     pitch_angle_PID.iLimit = I_limit_init;
 
-    roll_angle_PID.P = 2;
+    roll_angle_PID.P = 0;
     roll_angle_PID.I = 0;
-    roll_angle_PID.D = 65.535f;
+    roll_angle_PID.D = 0;
     roll_angle_PID.iLimit = I_limit_init;
 
-    yaw_angle_PID.P = 1;
+    yaw_angle_PID.P = 0;
     yaw_angle_PID.I = 0;
     yaw_angle_PID.D = 0;
     yaw_angle_PID.iLimit = I_limit_init;
@@ -108,44 +107,6 @@ static inline uint16_t range_thr(uint16_t thr)
     return 600 + 0.6 * thr;
 }
 
-#if 0 //供单环PID使用
-void PID_calculate(void)
-{
-    static uint32_t told = 0;
-    
-    // 从遥控接收机获取期望值
-    
-    roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
-    pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
-    yaw_angle_PID.Desired   = 0; // range_trans(3000-u16Rcvr_ch4, max_angle_yaw); // f(u16Rcvr_ch4) -
-                                     // !!!! // 假通道，没有需求
-    uint32_t tnow = msTimerCounter;
-    PID_postion_cal(&roll_angle_PID,  roll,  tnow-told); //要求平稳飞行 实际角度很小，0代表没有积分
-    PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
-    PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
-    told = tnow;
-
-    // 获取输出值
-    uint16_t Thr = u16Rcvr_ch3; /// 不用转换量程，因为通道捕获和电调输出都是1000～2000
-    float Pitch  = pitch_angle_PID.Output;
-    float Roll   = roll_angle_PID.Output;
-    float Yaw    = yaw_angle_PID.Output;
-
-    // 输出值融合到四个电机
-    if (Thr > 1100) { // 是否锁定状态
-        motor_pwm_1 = range_pwm( - Pitch - Roll - Yaw, Thr);
-        motor_pwm_2 = range_pwm( + Pitch - Roll + Yaw, Thr);
-        motor_pwm_3 = range_pwm( + Pitch + Roll - Yaw, Thr);
-        motor_pwm_4 = range_pwm( - Pitch + Roll + Yaw, Thr);
-    } else {
-        motor_pwm_1 = motor_pwm_min;
-        motor_pwm_2 = motor_pwm_min;
-        motor_pwm_3 = motor_pwm_min;
-        motor_pwm_4 = motor_pwm_min;
-    }
-}
-#endif
-
 // 外环角度PID
 void CtrlAttiAng(void)
 {
@@ -176,7 +137,10 @@ void CtrlAttiRate(void)
     PID_postion_cal(&pitch_rate_PID, gyro[1], tnow-told);
     PID_postion_cal(&yaw_rate_PID,   gyro[2], tnow-told);
     told = tnow;
-    
+}
+
+void CtrlMotorSpeed(void)
+{
     // 获取输出值
     uint16_t Thr = u16Rcvr_ch3; /// 不用转换量程，因为通道捕获和电调输出都是1000～2000
     float Pitch  = pitch_rate_PID.Output;
@@ -196,4 +160,3 @@ void CtrlAttiRate(void)
         motor_pwm_4 = motor_pwm_min;
     }
 }
-

@@ -63,6 +63,7 @@ int main(void)
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
+        CtrlMotorSpeed();
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }
