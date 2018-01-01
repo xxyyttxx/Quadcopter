@@ -17,11 +17,6 @@
 #include "pid.h"
 #include <stdio.h>
 
-#ifndef ndebug
-static int ax_cc, ay_cc, az_cc;
-static int gx_cc, gy_cc, gz_cc; // 硬解，没有读取六轴原始数据
-#endif
-
 void my1_ANO_DT_Data_Receive_Anl(u8 *RxBuffer, uint32_t length);
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -41,13 +36,15 @@ u8 data_to_send[50];    //发送数据缓存 //// bug 没有上锁。。。
 void ANO_DT_Data_Exchange(void)
 {
     static u8 cnt = 0;
-    const u8 senser_cnt    = 8;
+    const u8 senser_cnt    = 16;
     const u8 status_cnt    = 16;
     const u8 rcdata_cnt    = 32;
     const u8 motopwm_cnt   = 32;
     const u8 power_cnt     = 64;
-    const u8 F1_cnt        = 8;
-    const u8 F2_cnt        = 8;
+    const u8 F1_cnt        = 16;
+    const u8 F2_cnt        = 16;
+    const u8 F3_cnt        = 16;
+    const u8 F4_cnt        = 16;
 
     if((cnt % senser_cnt) == (senser_cnt-1))
         f.send_senser = 1;
@@ -69,6 +66,12 @@ void ANO_DT_Data_Exchange(void)
 
     if((cnt % F2_cnt) == (F2_cnt-1))
         f.send_F2 = 1;
+
+    if((cnt % F3_cnt) == (F3_cnt-1))
+        f.send_F3 = 1;
+
+    if((cnt % F4_cnt) == (F4_cnt-1))
+        f.send_F4 = 1;
 
     cnt++;
 /////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +97,7 @@ void ANO_DT_Data_Exchange(void)
         // ANO_DT_Send_Senser(mpu6050.Acc.x,mpu6050.Acc.y,mpu6050.Acc.z,
         //                                      mpu6050.Gyro.x,mpu6050.Gyro.y,mpu6050.Gyro.z,
         //                                      ak8975.Mag_Adc.x,ak8975.Mag_Adc.y,ak8975.Mag_Adc.z,0);
-        ANO_DT_Send_Senser(ax_cc, ay_cc, az_cc, gx_cc, gy_cc, gz_cc, 124, 125, 126, 0); // bar 压根没用上不知道有什么用
+        ANO_DT_Send_Senser(accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2], 0, 0, 0, u16Rcvr_ch3>1100); // bar 压根没用上不知道有什么用
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_rcdata)
@@ -103,10 +106,6 @@ void ANO_DT_Data_Exchange(void)
         // void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6);
         // ANO_DT_Send_RCData(Rc_Pwm_In[0],Rc_Pwm_In[1],Rc_Pwm_In[2],Rc_Pwm_In[3],Rc_Pwm_In[4],Rc_Pwm_In[5],Rc_Pwm_In[6],Rc_Pwm_In[7],0,0);
         ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, motor_pwm_1, motor_pwm_2, motor_pwm_3, motor_pwm_4, 9, 10);
-#ifdef debug_
-        void Usart2_Send(uint8_t *data_to_send, uint32_t length);
-        Usart2_Send("\r\nhere?,why no?\r\n", sizeof "\r\nhere?,why no?\r\n");
-#endif
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_motopwm)
@@ -137,14 +136,23 @@ void ANO_DT_Data_Exchange(void)
                            yaw_angle_PID.P, yaw_angle_PID.I, yaw_angle_PID.D
                            );
     }
+    else if(f.send_pid2)
+    {
+        f.send_pid2 = 0;
+        ANO_DT_Send_PID(2, roll_rate_PID.P, roll_rate_PID.I, roll_rate_PID.D,
+                           pitch_rate_PID.P, pitch_rate_PID.I, pitch_rate_PID.D,
+                           yaw_rate_PID.P, yaw_rate_PID.I, yaw_rate_PID.D
+                           );
+    }
 /////////////////////////////////////////////////////////////////////////////////////
     else if (f.send_F1) {
         f.send_F1 = 0;
-        // void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
+        // void ANO_DT_Send_Fx_pid_ans(u8 Fx, float rcver_rol, float rcver_pit, float rcver_yaw,
         //             float error_rol, float error_pit, float error_yaw,
         //             float react_rol, float react_pit, float react_yaw);
-
-        ANO_DT_Send_F1(roll_angle_PID.Desired, pitch_angle_PID.Desired, yaw_angle_PID.Desired,
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF1,
+                       roll_angle_PID.Desired, pitch_angle_PID.Desired, yaw_angle_PID.Desired,
                        roll_angle_PID.Error,   pitch_angle_PID.Error,   yaw_angle_PID.Error,
                        roll_angle_PID.Output,  pitch_angle_PID.Output,  yaw_angle_PID.Output
                        );
@@ -152,10 +160,59 @@ void ANO_DT_Data_Exchange(void)
 /////////////////////////////////////////////////////////////////////////////////////
     else if (f.send_F2) {
         f.send_F2 = 0;
-        // void ANO_DT_Send_F2(float Integ_Output_rol, float Integ_Output_pit, float Integ_Output_yaw);
-        ANO_DT_Send_F2(roll_angle_PID.I * roll_angle_PID.Integ,
-                       pitch_angle_PID.I * pitch_angle_PID.Integ,
-                       yaw_angle_PID.I * yaw_angle_PID.Integ);
+        // void ANO_DT_Send_Fx_pid_part(u8 Fx, float P_Output_rol, float P_Output_pit, float P_Output_yaw,
+        //                      float I_Output_rol, float I_Output_pit, float I_Output_yaw,
+        //                      float D_Output_rol, float D_Output_rol, float D_Output_rol);
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF2,
+                        // PID->P * PID->Error
+                        roll_angle_PID.D * roll_angle_PID.Error,
+                        pitch_angle_PID.D * pitch_angle_PID.Error,
+                        yaw_angle_PID.D * yaw_angle_PID.Error,
+                        // PID->I * PID->Integ
+                        roll_angle_PID.I * roll_angle_PID.Integ,
+                        pitch_angle_PID.I * pitch_angle_PID.Integ,
+                        yaw_angle_PID.I * yaw_angle_PID.Integ,
+                        // PID->D * PID->Deriv,
+                        roll_angle_PID.D * roll_angle_PID.Deriv,
+                        pitch_angle_PID.D * pitch_angle_PID.Deriv,
+                        yaw_angle_PID.D * yaw_angle_PID.Deriv
+                        );
+    }
+/////////////////////////////////////////////////////////////////////////////////////
+    else if (f.send_F3) {
+        f.send_F3 = 0;
+        // void ANO_DT_Send_Fx_pid_ans(u8 Fx, float rcver_rol, float rcver_pit, float rcver_yaw,
+        //             float error_rol, float error_pit, float error_yaw,
+        //             float react_rol, float react_pit, float react_yaw);
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF3,
+                       roll_rate_PID.Desired, pitch_rate_PID.Desired, yaw_rate_PID.Desired,
+                       roll_rate_PID.Error,   pitch_rate_PID.Error,   yaw_rate_PID.Error,
+                       roll_rate_PID.Output,  pitch_rate_PID.Output,  yaw_rate_PID.Output
+                       );
+    }
+/////////////////////////////////////////////////////////////////////////////////////
+    else if (f.send_F4) {
+        f.send_F4 = 0;
+        // void ANO_DT_Send_Fx_pid_part(u8 Fx, float P_Output_rol, float P_Output_pit, float P_Output_yaw,
+        //                      float I_Output_rol, float I_Output_pit, float I_Output_yaw,
+        //                      float D_Output_rol, float D_Output_rol, float D_Output_rol);
+        static u8 buf[50];
+        ANO_DT_Send_Fx_9float(buf, 0xF4,
+                        // PID->P * PID->Error
+                        roll_rate_PID.D * roll_rate_PID.Error,
+                        pitch_rate_PID.D * pitch_rate_PID.Error,
+                        yaw_rate_PID.D * yaw_rate_PID.Error,
+                        // PID->I * PID->Integ
+                        roll_rate_PID.I * roll_rate_PID.Integ,
+                        pitch_rate_PID.I * pitch_rate_PID.Integ,
+                        yaw_rate_PID.I * yaw_rate_PID.Integ,
+                        // PID->D * PID->Deriv,
+                        roll_rate_PID.D * roll_rate_PID.Deriv,
+                        pitch_rate_PID.D * pitch_rate_PID.Deriv,
+                        yaw_rate_PID.D * yaw_rate_PID.Deriv
+                        );
     }
 /////////////////////////////////////////////////////////////////////////////////////
 }
@@ -288,17 +345,19 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         yaw_angle_PID.P   = 0.001f * ( (*(data_buf+16)<<8)|*(data_buf+17) );
         yaw_angle_PID.I   = 0.001f * ( (*(data_buf+18)<<8)|*(data_buf+19) );
         yaw_angle_PID.D   =  0.01f * ( (*(data_buf+20)<<8)|*(data_buf+21) );
-
-#ifdef debug_
-        void Usart2_Send(uint8_t *data_to_send, uint32_t length);
-        Usart2_Send("\r\nhere2\r\n", sizeof "\r\nhere2\r\n");
-        static char s[20]; // Usart_Send 是排队并延迟到中断发送，不阻塞。。
-        Usart2_Send((uint8_t *)s, snprintf(s, 100, "\r\n%d\r\n", (*(data_buf+20)<<8)|*(data_buf+21)));
-#endif
     }
     if(*(data_buf+2)==0X11)                             //PID2
     {
         ANO_DT_Send_Check(*(data_buf+2),sum);
+        roll_rate_PID.P  = 0.001f * ( (*(data_buf+4)<<8) |*(data_buf+5)  );
+        roll_rate_PID.I  = 0.001f * ( (*(data_buf+6)<<8) |*(data_buf+7)  );
+        roll_rate_PID.D  =  0.01f * ( (*(data_buf+8)<<8) |*(data_buf+9)  );
+        pitch_rate_PID.P = 0.001f * ( (*(data_buf+10)<<8)|*(data_buf+11) );
+        pitch_rate_PID.I = 0.001f * ( (*(data_buf+12)<<8)|*(data_buf+13) );
+        pitch_rate_PID.D =  0.01f * ( (*(data_buf+14)<<8)|*(data_buf+15) );
+        yaw_rate_PID.P   = 0.001f * ( (*(data_buf+16)<<8)|*(data_buf+17) );
+        yaw_rate_PID.I   = 0.001f * ( (*(data_buf+18)<<8)|*(data_buf+19) );
+        yaw_rate_PID.D   =  0.01f * ( (*(data_buf+20)<<8)|*(data_buf+21) );
     }
     if(*(data_buf+2)==0X12)                             //PID3
     {
@@ -587,88 +646,56 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 
 /******************* (C) COPYRIGHT 2014 ANO TECH *****END OF FILE************/
 
-void ANO_DT_Send_F1(float rcver_rol, float rcver_pit, float rcver_yaw,
-                    float error_rol, float error_pit, float error_yaw,
-                    float react_rol, float react_pit, float react_yaw)
+
+void ANO_DT_Send_Fx_9float(u8 data_to_send[], u8 Fx,
+                    float _f1, float _f2, float _f3,
+                    float _f4, float _f5, float _f6,
+                    float _f7, float _f8, float _f9)
 {
-    static u8 data_to_send[200];
     u8 _cnt=0;
     data_to_send[_cnt++]=0xAA;
     data_to_send[_cnt++]=0xAA;
-    data_to_send[_cnt++]=0xF1;
+    data_to_send[_cnt++]=Fx;
     data_to_send[_cnt++]=0;
 
-    data_to_send[_cnt++]=BYTE3(rcver_rol);
-    data_to_send[_cnt++]=BYTE2(rcver_rol);
-    data_to_send[_cnt++]=BYTE1(rcver_rol);
-    data_to_send[_cnt++]=BYTE0(rcver_rol);
-    data_to_send[_cnt++]=BYTE3(rcver_pit);
-    data_to_send[_cnt++]=BYTE2(rcver_pit);
-    data_to_send[_cnt++]=BYTE1(rcver_pit);
-    data_to_send[_cnt++]=BYTE0(rcver_pit);
-    data_to_send[_cnt++]=BYTE3(rcver_yaw);
-    data_to_send[_cnt++]=BYTE2(rcver_yaw);
-    data_to_send[_cnt++]=BYTE1(rcver_yaw);
-    data_to_send[_cnt++]=BYTE0(rcver_yaw);
+    data_to_send[_cnt++]=BYTE3(_f1);
+    data_to_send[_cnt++]=BYTE2(_f1);
+    data_to_send[_cnt++]=BYTE1(_f1);
+    data_to_send[_cnt++]=BYTE0(_f1);
+    data_to_send[_cnt++]=BYTE3(_f2);
+    data_to_send[_cnt++]=BYTE2(_f2);
+    data_to_send[_cnt++]=BYTE1(_f2);
+    data_to_send[_cnt++]=BYTE0(_f2);
+    data_to_send[_cnt++]=BYTE3(_f3);
+    data_to_send[_cnt++]=BYTE2(_f3);
+    data_to_send[_cnt++]=BYTE1(_f3);
+    data_to_send[_cnt++]=BYTE0(_f3);
 
-    data_to_send[_cnt++]=BYTE3(error_rol);
-    data_to_send[_cnt++]=BYTE2(error_rol);
-    data_to_send[_cnt++]=BYTE1(error_rol);
-    data_to_send[_cnt++]=BYTE0(error_rol);
-    data_to_send[_cnt++]=BYTE3(error_pit);
-    data_to_send[_cnt++]=BYTE2(error_pit);
-    data_to_send[_cnt++]=BYTE1(error_pit);
-    data_to_send[_cnt++]=BYTE0(error_pit);
-    data_to_send[_cnt++]=BYTE3(error_yaw);
-    data_to_send[_cnt++]=BYTE2(error_yaw);
-    data_to_send[_cnt++]=BYTE1(error_yaw);
-    data_to_send[_cnt++]=BYTE0(error_yaw);
+    data_to_send[_cnt++]=BYTE3(_f4);
+    data_to_send[_cnt++]=BYTE2(_f4);
+    data_to_send[_cnt++]=BYTE1(_f4);
+    data_to_send[_cnt++]=BYTE0(_f4);
+    data_to_send[_cnt++]=BYTE3(_f5);
+    data_to_send[_cnt++]=BYTE2(_f5);
+    data_to_send[_cnt++]=BYTE1(_f5);
+    data_to_send[_cnt++]=BYTE0(_f5);
+    data_to_send[_cnt++]=BYTE3(_f6);
+    data_to_send[_cnt++]=BYTE2(_f6);
+    data_to_send[_cnt++]=BYTE1(_f6);
+    data_to_send[_cnt++]=BYTE0(_f6);
 
-    data_to_send[_cnt++]=BYTE3(react_rol);
-    data_to_send[_cnt++]=BYTE2(react_rol);
-    data_to_send[_cnt++]=BYTE1(react_rol);
-    data_to_send[_cnt++]=BYTE0(react_rol);
-    data_to_send[_cnt++]=BYTE3(react_pit);
-    data_to_send[_cnt++]=BYTE2(react_pit);
-    data_to_send[_cnt++]=BYTE1(react_pit);
-    data_to_send[_cnt++]=BYTE0(react_pit);
-    data_to_send[_cnt++]=BYTE3(react_yaw);
-    data_to_send[_cnt++]=BYTE2(react_yaw);
-    data_to_send[_cnt++]=BYTE1(react_yaw);
-    data_to_send[_cnt++]=BYTE0(react_yaw);
-
-    data_to_send[3] = _cnt-4;
-
-    u8 sum = 0;
-    for(u8 i=0;i<_cnt;i++)
-        sum += data_to_send[i];
-    data_to_send[_cnt++]=sum;
-
-    ANO_DT_Send_Data(data_to_send, _cnt);
-}
-
-
-void ANO_DT_Send_F2(float Integ_Output_rol, float Integ_Output_pit, float Integ_Output_yaw)
-{
-    static u8 data_to_send[200];
-    u8 _cnt=0;
-    data_to_send[_cnt++]=0xAA;
-    data_to_send[_cnt++]=0xAA;
-    data_to_send[_cnt++]=0xF2;
-    data_to_send[_cnt++]=0;
-
-    data_to_send[_cnt++]=BYTE3(Integ_Output_rol);
-    data_to_send[_cnt++]=BYTE2(Integ_Output_rol);
-    data_to_send[_cnt++]=BYTE1(Integ_Output_rol);
-    data_to_send[_cnt++]=BYTE0(Integ_Output_rol);
-    data_to_send[_cnt++]=BYTE3(Integ_Output_pit);
-    data_to_send[_cnt++]=BYTE2(Integ_Output_pit);
-    data_to_send[_cnt++]=BYTE1(Integ_Output_pit);
-    data_to_send[_cnt++]=BYTE0(Integ_Output_pit);
-    data_to_send[_cnt++]=BYTE3(Integ_Output_yaw);
-    data_to_send[_cnt++]=BYTE2(Integ_Output_yaw);
-    data_to_send[_cnt++]=BYTE1(Integ_Output_yaw);
-    data_to_send[_cnt++]=BYTE0(Integ_Output_yaw);
+    data_to_send[_cnt++]=BYTE3(_f7);
+    data_to_send[_cnt++]=BYTE2(_f7);
+    data_to_send[_cnt++]=BYTE1(_f7);
+    data_to_send[_cnt++]=BYTE0(_f7);
+    data_to_send[_cnt++]=BYTE3(_f8);
+    data_to_send[_cnt++]=BYTE2(_f8);
+    data_to_send[_cnt++]=BYTE1(_f8);
+    data_to_send[_cnt++]=BYTE0(_f8);
+    data_to_send[_cnt++]=BYTE3(_f9);
+    data_to_send[_cnt++]=BYTE2(_f9);
+    data_to_send[_cnt++]=BYTE1(_f9);
+    data_to_send[_cnt++]=BYTE0(_f9);
 
     data_to_send[3] = _cnt-4;
 
