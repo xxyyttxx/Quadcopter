@@ -49,7 +49,7 @@ int main(void)
     delay(4000);
     RCV_IC_init();
 #endif
-    while (mpu_dmp_init());
+    while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
 
     /* USART configuration */
     USART_Config();
