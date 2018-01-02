@@ -1632,7 +1632,6 @@ int mpu_set_sensors(unsigned char sensors)
         /* Latched interrupts only used in LP accel mode. */
         mpu_set_int_latched(0);
 
-		MPU_Write_Byte(0X37 , 0x82);  
 #ifdef AK89xx_SECONDARY
 #ifdef AK89xx_BYPASS
     if (sensors & INV_XYZ_COMPASS)

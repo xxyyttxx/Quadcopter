@@ -39,36 +39,27 @@ int main(void)
     motor_pwm_4 = motor_pwm_min;
     delay(1100);
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
-    RCV_IC_init();
 #else
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-    RCV_IC_init();
 #endif
+    RCV_IC_init();
     while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
-    InitHMC5883();     //初始化磁力计
-
-    /* USART configuration */
     USART_Config();
-
-    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
-     MY_COM1 receive data register is not empty */
-    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
     PID_init();
 
+    while (InitHMC5883());  // 初始化磁力计
+//    hmc_correct(mag_mid);   // 数据校正 debug
 
-    hmc_correct();  //数据校正
-    updateHMC5883();
-    yaw_angle_PID.Desired = atan2(magY,magX) * 180/3.14;
+    Attitude();
+    yaw_angle_PID.Desired = yaw;
     for (i=0;;i++) {
-        updateHMC5883();
 
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
         CtrlMotorSpeed();
 
-        yaw=atan2(magY,magX) * 180/3.14;
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }
@@ -108,4 +99,8 @@ static void USART_Config(void)
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
     MY_COMInit(COM1, &USART_InitStructure);
+
+    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
+        MY_COM1 receive data register is not empty */
+    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 }

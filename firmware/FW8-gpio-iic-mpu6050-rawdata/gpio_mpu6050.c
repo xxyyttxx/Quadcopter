@@ -91,7 +91,7 @@ static uint8_t MPU_Set_LPF(uint16_t lpf);
 static uint8_t MPU_Set_Rate(uint16_t rate);
 static uint8_t MPU_Set_Fifo(uint8_t sens);
 
-static short MPU_Get_Temperature(void);
+static short   MPU_Get_Temperature(void);
 static uint8_t MPU_Get_Gyroscope(short *gx, short *gy, short *gz);
 static uint8_t MPU_Get_Accelerometer(short *ax, short *ay, short *az);
 

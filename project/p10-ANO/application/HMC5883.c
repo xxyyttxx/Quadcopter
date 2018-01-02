@@ -1,19 +1,11 @@
 #include "gpio_hmc5883.h"
+#include "gpio_mpu6050.h"
 #include "gpio_i2c.h"
 #include "delay.h"
-#include "math.h"
-#include "Attitude.h"
 
 #define  HMC5883_Addr   0x1E
 
-unsigned char BUF[8];
-
-short magRange0,magRange1,magRange2,magRange3,magRange4,magRange5;
-short magX, magY, magZ;
-float magX_off, magY_off, magZ_off;
-float magX_cc, magY_cc, magZ_cc;
-
-uint8_t HMC_Write_Byte(uint8_t reg, uint8_t data)
+static uint8_t HMC_Write_Byte(uint8_t reg, uint8_t data)
 {
     IIC_Start();
     IIC_Send_Byte((HMC5883_Addr<<1)|0);
@@ -34,7 +26,7 @@ uint8_t HMC_Write_Byte(uint8_t reg, uint8_t data)
     return 0;
 }
 
-uint8_t HMC_Read_Byte(uint8_t reg)
+static uint8_t HMC_Read_Byte(uint8_t reg)
 {
     uint8_t res;
     IIC_Start();
@@ -51,62 +43,53 @@ uint8_t HMC_Read_Byte(uint8_t reg)
 }
 
 
-void InitHMC5883()
+uint8_t InitHMC5883(void)
 {
-
-     HMC_Write_Byte(0x02,0x00);
-     HMC_Write_Byte(0x01,0xE0);
- }
-
-
-void updateHMC5883()
-{
-
-
-    HMC_Write_Byte(0x00,0x14);
-    HMC_Write_Byte(0x02,0x00);
- //   Delayms(10);
-
-    BUF[1]=HMC_Read_Byte(0x03);//OUT_X_L_A
-    BUF[2]=HMC_Read_Byte(0x04);//OUT_X_H_A
-    BUF[3]=HMC_Read_Byte(0x07);//OUT_Y_L_A
-    BUF[4]=HMC_Read_Byte(0x08);//OUT_Y_H_A
-    BUF[5]=HMC_Read_Byte(0x05);//OUT_Z_L_A
-    BUF[6]=HMC_Read_Byte(0x06);//OUT_Y_H_A
-
-    magX=(short)((BUF[1] << 8)|BUF[2]); //Combine MSB and LSB of X Data output register
-    magY=(short)((BUF[3] << 8)|BUF[4]); //Combine MSB and LSB of Y Data output register
-    magZ=(short)((BUF[5] << 8)|BUF[6]); //Combine MSB and LSB of Z Data output register
-
-    magX=(magX-magX_off);
-    magY=(magY-magY_off); // -4096~4095   ->   -8~8
-    magZ=(magZ-magZ_off);
-
-
-
+    // 主控制器的I2C与MPU6050的AUXI2C直通。控制器可以直接访问GY-86上的HMC5883L。即MPU6050不是AUXI2C线的主机。
+    if (!MPU_Write_Byte(0X37, 0x82)) return 0;
+    delay(20);
+    return HMC_Write_Byte(0x02, 0x00) && HMC_Write_Byte(0x01, 0xE0);
 }
 
-void hmc_correct(){
-    int i=0;
-    int num=1000;
+// 量程 -4096~4095 -> -8~8 gz     0.5gz->250!
+void updateHMC5883(short mag[3])
+{
+    unsigned char BUF[8];
 
-    for(i=0;i<num;i++)
+    HMC_Write_Byte(0x00, 0x14);
+    HMC_Write_Byte(0x02, 0x00);
+    delay(10);
+
+    BUF[1] = HMC_Read_Byte(0x03); // OUT_X_L_A
+    BUF[2] = HMC_Read_Byte(0x04); // OUT_X_H_A
+    BUF[3] = HMC_Read_Byte(0x07); // OUT_Y_L_A
+    BUF[4] = HMC_Read_Byte(0x08); // OUT_Y_H_A
+    BUF[5] = HMC_Read_Byte(0x05); // OUT_Z_L_A
+    BUF[6] = HMC_Read_Byte(0x06); // OUT_Y_H_A
+
+    mag[0] = (BUF[1] << 8) | BUF[2]; // Combine MSB and LSB of X Data output register
+    mag[1] = (BUF[3] << 8) | BUF[4]; // Combine MSB and LSB of Y Data output register
+    mag[2] = (BUF[5] << 8) | BUF[6]; // Combine MSB and LSB of Z Data output register
+}
+
+void hmc_correct(short mag_mid[3]){
+    const int num=1000;
+    short magRange[6]={0}; // bug fixed
+
+    for(int i=0; i<num; i++)
     {
-        updateHMC5883();
-        hmc_get_off(magX,magY,magZ);
+        short mag[3];
+        updateHMC5883(mag);
+        if(magRange[0] > mag[0]) magRange[0] = mag[0];
+        if(magRange[1] < mag[0]) magRange[1] = mag[0];
+        if(magRange[2] > mag[1]) magRange[2] = mag[1];
+        if(magRange[3] < mag[1]) magRange[3] = mag[1];
+        if(magRange[4] > mag[2]) magRange[4] = mag[2];
+        if(magRange[5] < mag[2]) magRange[5] = mag[2];
         delay(6);   //6s
     }
-}
 
-void hmc_get_off(float mx, float my, float mz){
-
-    if(magRange0 > mx) magRange0 = mx; // x min
-    if(magRange1 < mx) magRange1 = mx; // x max
-    if(magRange2 > my) magRange2 = my;
-    if(magRange3 < my) magRange3 = my;
-    if(magRange4 > mz) magRange4 = mz; // z min
-    if(magRange5 < mz) magRange5 = mz; // z max
-    magX_off = (magRange0+magRange1)/2.0;
-    magY_off = (magRange2+magRange3)/2.0;
-    magZ_off = (magRange4+magRange5)/2.0;
+    mag_mid[0] = (magRange[0]+magRange[1])/2;
+    mag_mid[1] = (magRange[2]+magRange[3])/2;
+    mag_mid[2] = (magRange[4]+magRange[5])/2;
 }
