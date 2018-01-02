@@ -5,10 +5,12 @@
 #include "delay.h"
 #include "data_transfer.h"
 #include "inv_mpu.h"
+#include "gpio_hmc5883.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
 #include "pid.h"
+#include "math.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,16 +42,17 @@ int main(void)
     delay(5000);
     RCV_IC_init();
 #else
-    delay(4000);
+   // delay(4000);
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-    delay(4000);
+  //  delay(4000);
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-    delay(4000);
+  //  delay(4000);
     RCV_IC_init();
 #endif
     while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
+		InitHMC5883();     //初始化磁力计
 
     /* USART configuration */
     USART_Config();
@@ -59,11 +62,17 @@ int main(void)
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 	PID_init();
 	
+	
+		hmc_correct();	//数据校正
     for (i=0;;i++) {
+				updateHMC5883();
+			
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
         CtrlMotorSpeed();
+			
+				yaw=atan2(magY,magX) * 180/3.14;
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }

@@ -11,6 +11,7 @@
 
 #include "data_transfer.h"
 #include "gpio_mpu6050.h"
+#include "gpio_hmc5883.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
@@ -97,7 +98,7 @@ void ANO_DT_Data_Exchange(void)
         // ANO_DT_Send_Senser(mpu6050.Acc.x,mpu6050.Acc.y,mpu6050.Acc.z,
         //                                      mpu6050.Gyro.x,mpu6050.Gyro.y,mpu6050.Gyro.z,
         //                                      ak8975.Mag_Adc.x,ak8975.Mag_Adc.y,ak8975.Mag_Adc.z,0);
-        ANO_DT_Send_Senser(accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2], 0, 0, 0, u16Rcvr_ch3>1100); // bar 压根没用上不知道有什么用
+        ANO_DT_Send_Senser(accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2],magX, magY, magZ, u16Rcvr_ch3>1100); // bar 压根没用上不知道有什么用
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_rcdata)
