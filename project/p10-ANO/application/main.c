@@ -39,16 +39,10 @@ int main(void)
     motor_pwm_4 = motor_pwm_min;
     delay(1100);
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
-    delay(5000);
     RCV_IC_init();
 #else
-   // delay(4000);
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-  //  delay(4000);
-    motor_pwm_init();
-    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-  //  delay(4000);
     RCV_IC_init();
 #endif
     while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
