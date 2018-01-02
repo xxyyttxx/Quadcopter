@@ -7,7 +7,7 @@
 /* extern variables ---------------------------------------------------- */
 #define cn 10
 short gyro[3], accel[3], mag[3];        //九轴原始数据
-short mag_mid[3] = {-64, 4, -38};       //陀螺仪水平旋转校准数据 (特定系统)
+short mag_mid[3] = {0};//{-64, 4, -38};       //陀螺仪水平旋转校准数据 (特定系统)
 float yaw, pitch, roll;                 //姿态角
 
 void Attitude(void)

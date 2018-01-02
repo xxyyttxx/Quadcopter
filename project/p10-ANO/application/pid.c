@@ -115,8 +115,12 @@ void CtrlAttiAng(void)
     uint32_t tnow = msTimerCounter;
     roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
     pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
-    yaw_angle_PID.Desired  += range_trans(3000-u16Rcvr_ch4, max_rate_pr)*(tnow-told)/1000.f;
+    yaw_angle_PID.Desired  += range_trans(3000-u16Rcvr_ch4, max_rate_pr)*(tnow-told)/1000.f;   /// Question
 
+    if (yaw_angle_PID.Desired > +180.f) yaw_angle_PID.Desired -= 360.f;
+    if (yaw_angle_PID.Desired < -180.f) yaw_angle_PID.Desired += 360.f;
+    if (yaw_angle_PID.Desired - roll > +180.f) roll += 360.f;
+    if (yaw_angle_PID.Desired - roll < -180.f) roll -= 360.f;
     PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
     PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
     PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
