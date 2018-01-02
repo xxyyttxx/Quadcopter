@@ -44,7 +44,7 @@ void PID_init(void)
     yaw_angle_PID.I = 0;
     yaw_angle_PID.D = 0;
     yaw_angle_PID.iLimit = I_limit_init;
-    
+
     pitch_rate_PID.P = 1.5;
     pitch_rate_PID.I = 0;
     pitch_rate_PID.D = 1;
@@ -111,12 +111,12 @@ static inline uint16_t range_thr(uint16_t thr)
 void CtrlAttiAng(void)
 {
     static uint32_t told = 0;
-    
+
     uint32_t tnow = msTimerCounter;
     roll_angle_PID.Desired  = range_trans(u16Rcvr_ch1, max_angle_pr);       // f(u16Rcvr_ch1) +
     pitch_angle_PID.Desired = range_trans(u16Rcvr_ch2, max_angle_pr);       // f(u16Rcvr_ch2) +
     yaw_angle_PID.Desired  += range_trans(3000-u16Rcvr_ch4, max_rate_pr)*(tnow-told)/1000.f;
-    
+
     PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
     PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
     PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
@@ -127,7 +127,7 @@ void CtrlAttiAng(void)
 void CtrlAttiRate(void)
 {
     static uint32_t told = 0;
-    
+
     roll_rate_PID.Desired  = roll_angle_PID.Output ;
     pitch_rate_PID.Desired = pitch_angle_PID.Output;
     yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
@@ -135,7 +135,7 @@ void CtrlAttiRate(void)
     //roll_rate_PID.Desired  = range_trans(u16Rcvr_ch1, 100);
     //pitch_rate_PID.Desired = range_trans(u16Rcvr_ch2, 100);
     //yaw_rate_PID.Desired   = range_trans(3000-u16Rcvr_ch4, 60);
-    
+
     uint32_t tnow = msTimerCounter;
     PID_postion_cal(&roll_rate_PID,  gyro[0] / DMP_GYRO_SCALE, tnow-told); // DMP_GYRO_SCALE
     PID_postion_cal(&pitch_rate_PID, gyro[1] / DMP_GYRO_SCALE, tnow-told);

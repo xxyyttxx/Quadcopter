@@ -5,7 +5,7 @@
 typedef struct
 {
     float P, I, D;  // PID三个参数
-	float Desired;  // 期望
+    float Desired;  // 期望
     float Error;    // 误差
     float PreError; // 上一次误差
     float Integ;    // 积分值

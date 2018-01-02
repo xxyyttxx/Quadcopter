@@ -52,7 +52,7 @@ int main(void)
     RCV_IC_init();
 #endif
     while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
-		InitHMC5883();     //初始化磁力计
+    InitHMC5883();     //初始化磁力计
 
     /* USART configuration */
     USART_Config();
@@ -60,10 +60,10 @@ int main(void)
     /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
      MY_COM1 receive data register is not empty */
     USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
-	PID_init();
-	
-	
-    hmc_correct();	//数据校正
+    PID_init();
+
+
+    hmc_correct();  //数据校正
     updateHMC5883();
     yaw_angle_PID.Desired = atan2(magY,magX) * 180/3.14;
     for (i=0;;i++) {
