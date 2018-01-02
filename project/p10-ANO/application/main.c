@@ -63,16 +63,18 @@ int main(void)
 	PID_init();
 	
 	
-		hmc_correct();	//数据校正
+    hmc_correct();	//数据校正
+    updateHMC5883();
+    yaw_angle_PID.Desired = atan2(magY,magX) * 180/3.14;
     for (i=0;;i++) {
-				updateHMC5883();
-			
+        updateHMC5883();
+
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
         CtrlMotorSpeed();
-			
-				yaw=atan2(magY,magX) * 180/3.14;
+
+        yaw=atan2(magY,magX) * 180/3.14;
         ANO_DT_Data_Exchange();
         my2_ANO_DT_Data_Receive_Anl();
     }
