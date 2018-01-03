@@ -41,7 +41,6 @@ uint8_t InitHMC5883(void)
                                                         // 230 Counts/Ga
 }
 
-// 量程 -4096~4095 -> -8~8 gz     0.5gz->250!
 void updateHMC5883(short mag[3])
 {
     uint8_t buf[6];
