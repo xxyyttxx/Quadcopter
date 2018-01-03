@@ -22,8 +22,9 @@ void Attitude(void)
     mag[2] -= mag_mid[2];
 
     // 用磁力计数据计算YAW角
-    yaw = atan2f(mag[1],mag[0])*180/3.1415926f;
-
+    //yaw = atan2f(mag[1],mag[0])*180/3.1415926f;
+    yaw=atan2f(mag[1]*cosf(roll)+mag[2]*sinf(roll),mag[0]*cosf(pitch)+mag[1]*sinf(roll)*sinf(pitch)-mag[2]*cosf(roll)*sinf(pitch)) * 180/3.1415926f;
+	
     // 对陀螺仪数据做滑动窗口滤波
     static int gx_c, gy_c, gz_c;
     static short gx_w[cn], gy_w[cn], gz_w[cn];
