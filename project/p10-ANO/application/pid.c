@@ -30,12 +30,12 @@ extern float yaw, pitch, roll; // 观测角度，解算出来的
 
 void PID_init(void)
 {
-    pitch_angle_PID.P = 3;
+    pitch_angle_PID.P = 0;
     pitch_angle_PID.I = 0;
     pitch_angle_PID.D = 0;
     pitch_angle_PID.iLimit = I_limit_init;
 
-    roll_angle_PID.P = 3;
+    roll_angle_PID.P = 0;
     roll_angle_PID.I = 0;
     roll_angle_PID.D = 0;
     roll_angle_PID.iLimit = I_limit_init;
@@ -45,17 +45,17 @@ void PID_init(void)
     yaw_angle_PID.D = 0;
     yaw_angle_PID.iLimit = I_limit_init;
 
-    pitch_rate_PID.P = 1.5;
+    pitch_rate_PID.P = 0.5;
     pitch_rate_PID.I = 0;
     pitch_rate_PID.D = 1;
     pitch_rate_PID.iLimit = I_limit_init;
 
-    roll_rate_PID.P = 1.5;
+    roll_rate_PID.P = 0.5;
     roll_rate_PID.I = 0;
     roll_rate_PID.D = 1;
     roll_rate_PID.iLimit = I_limit_init;
 
-    yaw_rate_PID.P = 1.5;
+    yaw_rate_PID.P = 1;
     yaw_rate_PID.I = 0;
     yaw_rate_PID.D = 0;
     yaw_rate_PID.iLimit = I_limit_init;
@@ -134,11 +134,11 @@ void CtrlAttiRate(void)
 
     roll_rate_PID.Desired  = roll_angle_PID.Output ;
     pitch_rate_PID.Desired = pitch_angle_PID.Output;
-    yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
+    //yaw_rate_PID.Desired   = yaw_angle_PID.Output  ;
 
     //roll_rate_PID.Desired  = range_trans(u16Rcvr_ch1, 100);
     //pitch_rate_PID.Desired = range_trans(u16Rcvr_ch2, 100);
-    //yaw_rate_PID.Desired   = range_trans(3000-u16Rcvr_ch4, 60);
+    yaw_rate_PID.Desired   = range_trans(3000-u16Rcvr_ch4, 60);
 
     uint32_t tnow = msTimerCounter;
     PID_postion_cal(&roll_rate_PID,  gyro[0] / DMP_GYRO_SCALE, tnow-told); // DMP_GYRO_SCALE

@@ -42,6 +42,7 @@ void Attitude(void)
         // swap(pitch, roll) ? +-
 #endif /* nihetuoqiu */
 
+#if 0
     // 对陀螺仪数据做滑动窗口滤波
     static int gx_c, gy_c, gz_c;
     static short gx_w[cn], gy_w[cn], gz_w[cn];
@@ -62,4 +63,5 @@ void Attitude(void)
     gyro[0] = gx_c/cn;
     gyro[1] = gy_c/cn;
     gyro[2] = gz_c/cn;
+#endif
 }
