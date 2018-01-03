@@ -30,12 +30,12 @@ extern float yaw, pitch, roll; // 观测角度，解算出来的
 
 void PID_init(void)
 {
-    pitch_angle_PID.P = 0;
+    pitch_angle_PID.P = 2;
     pitch_angle_PID.I = 0;
     pitch_angle_PID.D = 0;
     pitch_angle_PID.iLimit = I_limit_init;
 
-    roll_angle_PID.P = 0;
+    roll_angle_PID.P = 2;
     roll_angle_PID.I = 0;
     roll_angle_PID.D = 0;
     roll_angle_PID.iLimit = I_limit_init;
@@ -45,17 +45,17 @@ void PID_init(void)
     yaw_angle_PID.D = 0;
     yaw_angle_PID.iLimit = I_limit_init;
 
-    pitch_rate_PID.P = 0.5;
+    pitch_rate_PID.P = 1;
     pitch_rate_PID.I = 0;
-    pitch_rate_PID.D = 1;
+    pitch_rate_PID.D = 0;
     pitch_rate_PID.iLimit = I_limit_init;
 
-    roll_rate_PID.P = 0.5;
+    roll_rate_PID.P = 1;
     roll_rate_PID.I = 0;
-    roll_rate_PID.D = 1;
+    roll_rate_PID.D = 0;
     roll_rate_PID.iLimit = I_limit_init;
 
-    yaw_rate_PID.P = 1;
+    yaw_rate_PID.P = 0;
     yaw_rate_PID.I = 0;
     yaw_rate_PID.D = 0;
     yaw_rate_PID.iLimit = I_limit_init;
