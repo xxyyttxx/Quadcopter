@@ -26,50 +26,30 @@ static uint8_t HMC_Write_Byte(uint8_t reg, uint8_t data)
     return 0;
 }
 
-static uint8_t HMC_Read_Byte(uint8_t reg)
-{
-    uint8_t res;
-    IIC_Start();
-    IIC_Send_Byte((HMC5883_Addr<<1)|0);
-    IIC_Wait_Ack();
-    IIC_Send_Byte(reg);
-    IIC_Wait_Ack();
-    IIC_Start();
-    IIC_Send_Byte((HMC5883_Addr<<1)|1);
-    IIC_Wait_Ack();
-    res = IIC_Read_Byte(0);
-    IIC_Stop();
-    return res;
+static uint8_t HMC_Read_Len(uint8_t reg, uint8_t len, uint8_t *buf) {
+    return MPU_Read_Len(HMC5883_Addr, reg, len, buf);
 }
-
 
 uint8_t InitHMC5883(void)
 {
     // 主控制器的I2C与MPU6050的AUXI2C直通。控制器可以直接访问GY-86上的HMC5883L。即MPU6050不是AUXI2C线的主机。
     if (!MPU_Write_Byte(0X37, 0x82)) return 0;
     delay(20);
-    return HMC_Write_Byte(0x02, 0x00) && HMC_Write_Byte(0x01, 0xE0);
+    return HMC_Write_Byte(0x00, 0x78) && HMC_Write_Byte(0x01, 0xE0) && HMC_Write_Byte(0x02, 0x00);
+                        // 0 11 110 00                 111 00000                        连续测量模式
+                        // 75Hz + 8次均值滤波           量程 +-8.1Ga ~ -2048~+2047 
+                                                        // 230 Counts/Ga
 }
 
-// 量程 -4096~4095 -> -8~8 gz     0.5gz->250!
 void updateHMC5883(short mag[3])
 {
-    unsigned char BUF[8];
+    uint8_t buf[6];
 
-    HMC_Write_Byte(0x00, 0x14);
-    HMC_Write_Byte(0x02, 0x00);
-    delay(10);
+    HMC_Read_Len(0x03, 6, buf);
 
-    BUF[1] = HMC_Read_Byte(0x03); // OUT_X_L_A
-    BUF[2] = HMC_Read_Byte(0x04); // OUT_X_H_A
-    BUF[3] = HMC_Read_Byte(0x07); // OUT_Y_L_A
-    BUF[4] = HMC_Read_Byte(0x08); // OUT_Y_H_A
-    BUF[5] = HMC_Read_Byte(0x05); // OUT_Z_L_A
-    BUF[6] = HMC_Read_Byte(0x06); // OUT_Y_H_A
-
-    mag[0] = (BUF[1] << 8) | BUF[2]; // Combine MSB and LSB of X Data output register
-    mag[1] = (BUF[3] << 8) | BUF[4]; // Combine MSB and LSB of Y Data output register
-    mag[2] = (BUF[5] << 8) | BUF[6]; // Combine MSB and LSB of Z Data output register
+    mag[0] = (buf[0] << 8) | buf[1]; // Combine MSB and LSB of X Data output register
+    mag[1] = (buf[4] << 8) | buf[5]; // Combine MSB and LSB of Y Data output register
+    mag[2] = (buf[2] << 8) | buf[3]; // Combine MSB and LSB of Z Data output register
 }
 
 void hmc_correct(short mag_mid[3]){
