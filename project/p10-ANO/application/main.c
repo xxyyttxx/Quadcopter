@@ -49,7 +49,7 @@ int main(void)
     PID_init();
 
     while (InitHMC5883());  // 初始化磁力计
-    hmc_correct(mag_mid);   // 数据校正 debug
+    // hmc_correct(mag_mid);   // 数据校正 debug
 
     Attitude();
     yaw_angle_PID.Desired = yaw;
