@@ -7,8 +7,8 @@
 // #define nihetuoqiu
 /* extern variables ---------------------------------------------------- */
 #define cn 10
-#define deg2rad(d) ((d)/180.f*3.1415926f)
-#define rad2deg(r) ((r)/3.1415926f*180.f)
+#define deg2rad(d) ((float)(d)/180.f*3.1415926f)
+#define rad2deg(r) ((float)(r)/3.1415926f*180.f)
 short gyro[3], accel[3], mag[3];        //九轴原始数据
 short mag_mid[3] = {80, -379, 55};      //陀螺仪水平旋转校准数据 (特定系统)
 float yaw, pitch, roll;                 //姿态角
@@ -30,16 +30,13 @@ void Attitude(void)
     mag[2] /= 412/5000.f;
 
     // 用磁力计数据计算YAW角
-    // yaw = rad2deg(atan2f(mag[1],mag[0]));
+    float deg_roll = deg2rad(roll);
+    float cos_deg_roll = cosf(deg_roll)
+    float deg_pitch = deg2rad(pitch);
     yaw = rad2deg(
-                // atan2f(mag[1]*cosf(deg2rad(roll))+mag[2]*sinf(deg2rad(fabsf(roll))),
-                // mag[0]*cosf(deg2rad(pitch))+mag[1]*sinf(deg2rad(fabsf(roll)))*sinf(deg2rad(fabsf(pitch)))-mag[2]*cosf(deg2rad(roll))*sinf(deg2rad(fabsf(pitch))))
-                // atan2f(mag[1]*cosf(deg2rad(roll))-mag[2]*sinf(deg2rad(fabsf(roll))),
-                // mag[0]*cosf(deg2rad(pitch))+mag[1]*sinf(deg2rad(fabsf(roll)))*sinf(deg2rad(fabsf(pitch)))+mag[2]*cosf(deg2rad(roll))*sinf(deg2rad(fabsf(pitch))))
-                atan2f(mag[1]*cosf(deg2rad(roll))-mag[2]*sinf(deg2rad(roll)),
-                mag[0]*cosf(deg2rad(pitch))+mag[1]*sinf(deg2rad(fabsf(roll)))*sinf(deg2rad(fabsf(pitch)))+mag[2]*cosf(deg2rad(roll))*sinf(deg2rad(pitch)))
+                atan2f(mag[1]*cos_deg_roll-mag[2]*sinf(deg_roll),
+                mag[0]*cosf(deg_pitch)+mag[1]*sinf(fabsf(deg_roll))*sinf(fabsf(deg_pitch))+mag[2]*cos_deg_roll*sinf(deg_pitch))
           );
-        // swap(pitch, roll) ? +-
 #endif /* nihetuoqiu */
 
 #if 0
