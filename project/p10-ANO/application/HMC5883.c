@@ -44,7 +44,7 @@ uint8_t InitHMC5883(void)
 void updateHMC5883(short mag[3])
 {
     uint8_t buf[6];
-
+    HMC_Write_Byte(0x02, 0x00);
     HMC_Read_Len(0x03, 6, buf);
 
     mag[0] = (buf[0] << 8) | buf[1]; // Combine MSB and LSB of X Data output register
