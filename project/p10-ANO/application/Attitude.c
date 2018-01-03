@@ -30,16 +30,16 @@ void Attitude(void)
     mag[2] /= 412/5000.f;
 
     // 用磁力计数据计算YAW角
-    float deg_roll = deg2rad(roll);
-    float cos_roll = cosf(deg_roll);
-    float sin_roll = sinf(deg_roll);
-    float deg_pitch = deg2rad(pitch);
-    float cos_pitch = cosf(deg_pitch);
-    float sin_pitch = sinf(deg_pitch);
+    float rad_roll = deg2rad(roll);
+    float cos_roll = cosf(rad_roll);
+    float sin_roll = sinf(rad_roll);
+    float rad_pitch = deg2rad(pitch);
+    float cos_pitch = cosf(rad_pitch);
+    float sin_pitch = sinf(rad_pitch);
     float sin_absroll = roll > 0 ? sin_roll : -sin_roll;
     float sin_abspitch = pitch > 0 ? sin_pitch : -sin_pitch;
     yaw = rad2deg(
-                atan2f(mag[1]*cos_roll  - mag[2]*sin_pitch,
+                atan2f(mag[1]*cos_roll  - mag[2]*sin_roll,
                        mag[0]*cos_pitch + mag[1]*sin_absroll*sin_abspitch + mag[2]*cos_roll*sin_pitch
                 )
           );
