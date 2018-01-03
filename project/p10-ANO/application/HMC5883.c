@@ -51,25 +51,3 @@ void updateHMC5883(short mag[3])
     mag[1] = (buf[4] << 8) | buf[5]; // Combine MSB and LSB of Y Data output register
     mag[2] = (buf[2] << 8) | buf[3]; // Combine MSB and LSB of Z Data output register
 }
-
-void hmc_correct(short mag_mid[3]){
-    const int num=1000;
-    short magRange[6]={0}; // bug fixed
-
-    for(int i=0; i<num; i++)
-    {
-        short mag[3];
-        updateHMC5883(mag);
-        if(magRange[0] > mag[0]) magRange[0] = mag[0];
-        if(magRange[1] < mag[0]) magRange[1] = mag[0];
-        if(magRange[2] > mag[1]) magRange[2] = mag[1];
-        if(magRange[3] < mag[1]) magRange[3] = mag[1];
-        if(magRange[4] > mag[2]) magRange[4] = mag[2];
-        if(magRange[5] < mag[2]) magRange[5] = mag[2];
-        delay(6);   //6s
-    }
-
-    mag_mid[0] = (magRange[0]+magRange[1])/2;
-    mag_mid[1] = (magRange[2]+magRange[3])/2;
-    mag_mid[2] = (magRange[4]+magRange[5])/2;
-}
