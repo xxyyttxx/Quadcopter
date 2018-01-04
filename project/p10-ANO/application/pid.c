@@ -4,6 +4,7 @@
 #include "Attitude.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
+#include "math.h"
 
 
 #define max_angle_pr 10
@@ -118,9 +119,11 @@ void CtrlAttiAng(void)
     yaw_angle_PID.Desired  += range_trans(3000-u16Rcvr_ch4, max_rate_pr)*(tnow-told)/1000.f;   /// Question
 
     if (yaw_angle_PID.Desired > +180.f) yaw_angle_PID.Desired -= 360.f;
-    if (yaw_angle_PID.Desired < -180.f) yaw_angle_PID.Desired += 360.f;
-    if (yaw_angle_PID.Desired - roll > +180.f) roll += 360.f;
-    if (yaw_angle_PID.Desired - roll < -180.f) roll -= 360.f;
+    if (yaw_angle_PID.Desired < -180.f) yaw_angle_PID.Desired += 360.f; // keep Desired in -180~180
+    if (yaw_angle_PID.Desired - yaw > +180.f) yaw += 360.f;
+    if (yaw_angle_PID.Desired - yaw < -180.f) yaw -= 360.f; // keep error smallest
+    // abs(error) > max_angle_pr ? Desired = yaw :  ;
+    // if (fabs(yaw_angle_PID.Desired - yaw) > max_angle_pr) yaw_angle_PID.Desired = yaw + copysignf(yaw_angle_PID.Desired - yaw, max_angle_pr);
     PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
     PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
     PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);

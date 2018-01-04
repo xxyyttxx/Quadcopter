@@ -38,11 +38,11 @@ void Attitude(void)
     float sin_pitch = sinf(rad_pitch);
     float sin_absroll = roll > 0 ? sin_roll : -sin_roll;
     float sin_abspitch = pitch > 0 ? sin_pitch : -sin_pitch;
-    yaw = rad2deg(
+    yaw = - rad2deg(
                 atan2f(mag[1]*cos_roll  - mag[2]*sin_roll,
                        mag[0]*cos_pitch + mag[1]*sin_absroll*sin_abspitch + mag[2]*cos_roll*sin_pitch
                 )
-          );
+            ); // -180˚~180˚
 #endif /* nihetuoqiu */
 
 #if 0
