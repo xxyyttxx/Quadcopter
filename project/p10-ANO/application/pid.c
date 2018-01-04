@@ -125,7 +125,7 @@ void CtrlAttiAng(void)
     if (yaw_angle_PID.Desired - yaw > +180.f) yaw_angle_PID.Desired -= 360.f;
     if (yaw_angle_PID.Desired - yaw < -180.f) yaw_angle_PID.Desired += 360.f; // keep error smallest
     // abs(error) > max_angle_pr ? Desired = yaw :  ;
-    if (fabs(yaw_angle_PID.Desired - yaw) > max_angle_pr) yaw_angle_PID.Desired = yaw + copysignf(yaw_angle_PID.Desired - yaw, max_angle_pr);
+    if (fabs(yaw_angle_PID.Desired - yaw) > max_angle_pr) yaw_angle_PID.Desired = yaw + copysignf(max_angle_pr, yaw_angle_PID.Desired - yaw);
     PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
     PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
     PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
