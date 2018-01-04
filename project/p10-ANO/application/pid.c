@@ -90,6 +90,7 @@ static void PID_postion_cal(PID_Typedef * PID, float measure, uint32_t dertT)
 static float range_trans(uint16_t Rcvr_ch, uint16_t max_angle)
 {
     // 此函数要求通道捕获值为1000～2000
+    if (Rcvr_ch<=5)    Rcvr_ch = 1500; // ==0 接收机上电但是没有遥控器信号
     if (Rcvr_ch<=1000) Rcvr_ch = 1001;
     if (Rcvr_ch>=2000) Rcvr_ch = 1999;
     if (Rcvr_ch<=1510 && Rcvr_ch>=1490) Rcvr_ch = 1500; // 死区
@@ -124,7 +125,7 @@ void CtrlAttiAng(void)
     if (yaw_angle_PID.Desired - yaw > +180.f) yaw_angle_PID.Desired -= 360.f;
     if (yaw_angle_PID.Desired - yaw < -180.f) yaw_angle_PID.Desired += 360.f; // keep error smallest
     // abs(error) > max_angle_pr ? Desired = yaw :  ;
-    // if (fabs(yaw_angle_PID.Desired - yaw) > max_angle_pr) yaw_angle_PID.Desired = yaw + copysignf(yaw_angle_PID.Desired - yaw, max_angle_pr);
+    if (fabs(yaw_angle_PID.Desired - yaw) > max_angle_pr) yaw_angle_PID.Desired = yaw + copysignf(yaw_angle_PID.Desired - yaw, max_angle_pr);
     PID_postion_cal(&roll_angle_PID,  roll,  tnow-told);
     PID_postion_cal(&pitch_angle_PID, pitch, tnow-told);
     PID_postion_cal(&yaw_angle_PID,   yaw,   tnow-told);
