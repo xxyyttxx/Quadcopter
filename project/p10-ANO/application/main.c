@@ -18,7 +18,6 @@ void my2_ANO_DT_Data_Receive_Anl(void);
 // #define init_governor // 不用初始化电调
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-int i;
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
 
@@ -52,15 +51,17 @@ int main(void)
 
     Attitude();
     yaw_angle_PID.Desired = yaw;
-    for (i=0;;i++) {
-
+    uint32_t told = msTimerCounter;
+    for (uint32_t i=0;;i++) {
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
         CtrlMotorSpeed();
 
-        ANO_DT_Data_Exchange();
+        uint32_t tnow = msTimerCounter;
+        ANO_DT_Data_Exchange(i, tnow-told);
         my2_ANO_DT_Data_Receive_Anl();
+        told = tnow;
     }
 }
 

@@ -34,8 +34,10 @@ u8 data_to_send[50];    //发送数据缓存 //// bug 没有上锁。。。
 /////////////////////////////////////////////////////////////////////////////////////
 //Data_Exchange函数处理各种数据发送请求，比如想实现每5ms发送一次传感器数据至上位机，即在此函数内实现
 //此函数应由用户每1ms调用一次
-void ANO_DT_Data_Exchange(void)
+void ANO_DT_Data_Exchange(uint16_t times, uint16_t time)
 {
+    static uint16_t maxtime = 0;
+    if (maxtime < time) maxtime = time;
     static u8 cnt = 0;
     const u8 senser_cnt    = 16;
     const u8 status_cnt    = 16;
@@ -106,7 +108,7 @@ void ANO_DT_Data_Exchange(void)
         f.send_rcdata = 0;
         // void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6);
         // ANO_DT_Send_RCData(Rc_Pwm_In[0],Rc_Pwm_In[1],Rc_Pwm_In[2],Rc_Pwm_In[3],Rc_Pwm_In[4],Rc_Pwm_In[5],Rc_Pwm_In[6],Rc_Pwm_In[7],0,0);
-        ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, motor_pwm_1, motor_pwm_2, motor_pwm_3, motor_pwm_4, 9, 10);
+        ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, motor_pwm_1, motor_pwm_2, motor_pwm_3, motor_pwm_4, times, maxtime);
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_motopwm)
@@ -120,7 +122,7 @@ void ANO_DT_Data_Exchange(void)
     {
         f.send_power = 0;
         // void ANO_DT_Send_Power(u16 votage, u16 current);
-        ANO_DT_Send_Power(12,0);
+        ANO_DT_Send_Power(100*time, 100*maxtime);
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_pid1)
