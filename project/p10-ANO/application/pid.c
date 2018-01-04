@@ -33,17 +33,17 @@ void PID_init(void)
 {
     pitch_angle_PID.P = 2.4;
     pitch_angle_PID.I = 0;
-    pitch_angle_PID.D = 0;
+    pitch_angle_PID.D = 4;
     pitch_angle_PID.iLimit = I_limit_init;
 
     roll_angle_PID.P = 2.4;
     roll_angle_PID.I = 0;
-    roll_angle_PID.D = 0;
+    roll_angle_PID.D = 4;
     roll_angle_PID.iLimit = I_limit_init;
 
-    yaw_angle_PID.P = 0;
-    yaw_angle_PID.I = 0;
-    yaw_angle_PID.D = 0;
+    yaw_angle_PID.P = 5;
+    yaw_angle_PID.I = 0.5;
+    yaw_angle_PID.D = 4;
     yaw_angle_PID.iLimit = I_limit_init;
 
     pitch_rate_PID.P = 1.2;
