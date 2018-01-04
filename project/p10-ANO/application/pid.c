@@ -92,6 +92,7 @@ static float range_trans(uint16_t Rcvr_ch, uint16_t max_angle)
     // 此函数要求通道捕获值为1000～2000
     if (Rcvr_ch<=1000) Rcvr_ch = 1001;
     if (Rcvr_ch>=2000) Rcvr_ch = 1999;
+    if (Rcvr_ch<=1510 && Rcvr_ch>=1490) Rcvr_ch = 1500; // 死区
     return (Rcvr_ch-1500)/500.f*max_angle;
 }
 
