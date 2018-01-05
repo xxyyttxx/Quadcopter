@@ -11,6 +11,7 @@
 
 #include "data_transfer.h"
 #include "gpio_mpu6050.h"
+#include "gpio_hmc5883.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
@@ -33,8 +34,10 @@ u8 data_to_send[50];    //发送数据缓存 //// bug 没有上锁。。。
 /////////////////////////////////////////////////////////////////////////////////////
 //Data_Exchange函数处理各种数据发送请求，比如想实现每5ms发送一次传感器数据至上位机，即在此函数内实现
 //此函数应由用户每1ms调用一次
-void ANO_DT_Data_Exchange(void)
+void ANO_DT_Data_Exchange(uint16_t times, uint16_t time)
 {
+    static uint16_t maxtime = 0;
+    if (maxtime < time) maxtime = time;
     static u8 cnt = 0;
     const u8 senser_cnt    = 16;
     const u8 status_cnt    = 16;
@@ -97,7 +100,7 @@ void ANO_DT_Data_Exchange(void)
         // ANO_DT_Send_Senser(mpu6050.Acc.x,mpu6050.Acc.y,mpu6050.Acc.z,
         //                                      mpu6050.Gyro.x,mpu6050.Gyro.y,mpu6050.Gyro.z,
         //                                      ak8975.Mag_Adc.x,ak8975.Mag_Adc.y,ak8975.Mag_Adc.z,0);
-        ANO_DT_Send_Senser(accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2], 0, 0, 0, u16Rcvr_ch3>1100); // bar 压根没用上不知道有什么用
+        ANO_DT_Send_Senser(accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2], mag[0], mag[1], mag[2], u16Rcvr_ch3>1100); // bar 压根没用上不知道有什么用
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_rcdata)
@@ -105,7 +108,7 @@ void ANO_DT_Data_Exchange(void)
         f.send_rcdata = 0;
         // void ANO_DT_Send_RCData(u16 thr,u16 yaw,u16 rol,u16 pit,u16 aux1,u16 aux2,u16 aux3,u16 aux4,u16 aux5,u16 aux6);
         // ANO_DT_Send_RCData(Rc_Pwm_In[0],Rc_Pwm_In[1],Rc_Pwm_In[2],Rc_Pwm_In[3],Rc_Pwm_In[4],Rc_Pwm_In[5],Rc_Pwm_In[6],Rc_Pwm_In[7],0,0);
-        ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, motor_pwm_1, motor_pwm_2, motor_pwm_3, motor_pwm_4, 9, 10);
+        ANO_DT_Send_RCData(u16Rcvr_ch3, u16Rcvr_ch4, u16Rcvr_ch1, u16Rcvr_ch2, motor_pwm_1, motor_pwm_2, motor_pwm_3, motor_pwm_4, times, maxtime);
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_motopwm)
@@ -119,7 +122,7 @@ void ANO_DT_Data_Exchange(void)
     {
         f.send_power = 0;
         // void ANO_DT_Send_Power(u16 votage, u16 current);
-        ANO_DT_Send_Power(12,0);
+        ANO_DT_Send_Power(100*time, 100*maxtime);
     }
 /////////////////////////////////////////////////////////////////////////////////////
     else if(f.send_pid1)
@@ -335,7 +338,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
         // ctrl_1.PID[PIDYAW].kp   = 0.001*( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
         // ctrl_1.PID[PIDYAW].ki   = 0.001*( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
         // ctrl_1.PID[PIDYAW].kd   = 0.001*( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
-                //Param_SavePID(); 
+                //Param_SavePID();
         roll_angle_PID.P  = 0.001f * ( (*(data_buf+4)<<8) |*(data_buf+5)  );
         roll_angle_PID.I  = 0.001f * ( (*(data_buf+6)<<8) |*(data_buf+7)  );
         roll_angle_PID.D  =  0.01f * ( (*(data_buf+8)<<8) |*(data_buf+9)  );

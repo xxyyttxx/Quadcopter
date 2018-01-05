@@ -25,7 +25,7 @@ typedef struct {
 
 extern dt_flag_t f;
 
-void ANO_DT_Data_Exchange(void);
+void ANO_DT_Data_Exchange(uint16_t times, uint16_t time);
 void ANO_DT_Data_Receive_Prepare(u8 data);
 void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num);
 void ANO_DT_Send_Version(u8 hardware_type, u16 hardware_ver,u16 software_ver,u16 protocol_ver,u16 bootloader_ver);

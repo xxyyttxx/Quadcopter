@@ -5,10 +5,12 @@
 #include "delay.h"
 #include "data_transfer.h"
 #include "inv_mpu.h"
+#include "gpio_hmc5883.h"
 #include "PWM-RCV.h"
 #include "motor-PWM.h"
 #include "Attitude.h"
 #include "pid.h"
+#include "math.h"
 void my2_ANO_DT_Data_Receive_Anl(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -16,7 +18,6 @@ void my2_ANO_DT_Data_Receive_Anl(void);
 // #define init_governor // 不用初始化电调
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-int i;
 /* Private function prototypes -----------------------------------------------*/
 static void USART_Config(void);
 
@@ -37,35 +38,30 @@ int main(void)
     motor_pwm_4 = motor_pwm_min;
     delay(1100);
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_min;
-    delay(5000);
-    RCV_IC_init();
 #else
-    delay(4000);
     motor_pwm_init();
     motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-    delay(4000);
-    motor_pwm_init();
-    motor_pwm_1 = motor_pwm_2 = motor_pwm_3 = motor_pwm_4 = motor_pwm_min;
-    delay(4000);
-    RCV_IC_init();
 #endif
+    RCV_IC_init();
     while (mpu_dmp_init()); // 六轴数据的具体量程见：`int mpu_init(void)` 函数实现上面的注释
-
-    /* USART configuration */
     USART_Config();
+    PID_init();
 
-    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
-     MY_COM1 receive data register is not empty */
-    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
-	PID_init();
-	
-    for (i=0;;i++) {
+    while (InitHMC5883());  // 初始化磁力计
+
+    Attitude();
+    yaw_angle_PID.Desired = yaw;
+    uint32_t told = msTimerCounter;
+    for (uint32_t i=0;;i++) {
         Attitude();
         CtrlAttiAng();
         CtrlAttiRate();
         CtrlMotorSpeed();
-        ANO_DT_Data_Exchange();
+
+        uint32_t tnow = msTimerCounter;
+        ANO_DT_Data_Exchange(i, tnow-told);
         my2_ANO_DT_Data_Receive_Anl();
+        told = tnow;
     }
 }
 
@@ -103,4 +99,8 @@ static void USART_Config(void)
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
     MY_COMInit(COM1, &USART_InitStructure);
+
+    /* Enable the MY_COM1 Receive interrupt: this interrupt is generated when the
+        MY_COM1 receive data register is not empty */
+    USART_ITConfig(MY_COM1, USART_IT_RXNE, ENABLE);
 }

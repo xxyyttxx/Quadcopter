@@ -84,9 +84,6 @@
 
 /* MPU6050 控制接口，更底层是 IIC + GPIO */
 
-static uint8_t MPU_Write_Byte(uint8_t reg, uint8_t data);  // IIC写一个字节
-static uint8_t MPU_Read_Byte(uint8_t reg);                 // IIC读一个字节
-
 static uint8_t MPU_Set_Gyro_Fsr(uint8_t fsr);
 static uint8_t MPU_Set_Accel_Fsr(uint8_t fsr);
 
@@ -94,7 +91,7 @@ static uint8_t MPU_Set_LPF(uint16_t lpf);
 static uint8_t MPU_Set_Rate(uint16_t rate);
 static uint8_t MPU_Set_Fifo(uint8_t sens);
 
-static short MPU_Get_Temperature(void);
+static short   MPU_Get_Temperature(void);
 static uint8_t MPU_Get_Gyroscope(short *gx, short *gy, short *gz);
 static uint8_t MPU_Get_Accelerometer(short *ax, short *ay, short *az);
 
